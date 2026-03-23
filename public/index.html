@@ -1310,9 +1310,7 @@
         <div class="sidebar-section">
           <div class="sidebar-heading">
             <span><i class="fas fa-users"></i> Study Groups</span>
-            <i class="fas fa-plus" onclick="createStudyGroup()" title="Create group"></i>
           </div>
-          <ul class="study-group-list" id="study-group-list"></ul>
         </div>
       </div>
 
@@ -1875,7 +1873,6 @@
         dmListEl.innerHTML = '<li style="color: var(--text-secondary); padding: 0.5rem;">Add friends to start chatting</li>';
       }
 
-      const studyGroupList = document.getElementById('study-group-list');
       if (studyGroupList) {
         studyGroupList.innerHTML = '';
         const studyGroups = ['Math Study Group', 'Science Study Group', 'History Study Group'];
@@ -2500,7 +2497,6 @@
       }
     };
 
-    window.createStudyGroup = function() {
       showToast('Study group creation coming soon!', 'info');
     };
 
