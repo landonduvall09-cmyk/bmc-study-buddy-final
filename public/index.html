@@ -674,11 +674,11 @@ cat > public/index.html << 'EOF'
     <!-- Study Timer Preview -->
     <div class="study-timer" style="margin-top: 2rem;">
       <h2 style="text-align: center; margin-bottom: 1rem;">📚 Study Timer</h2>
-      <div class="timer-display" id="pomodoro-display-home">25:00</div>
+      <div class="timer-display" id="study-display-home">25:00</div>
       <div class="timer-controls">
-        <button class="btn" onclick="startPomodoro()"><i class="fas fa-play"></i> Start</button>
-        <button class="btn btn-outline" onclick="pausePomodoro()"><i class="fas fa-pause"></i> Pause</button>
-        <button class="btn btn-outline" onclick="resetPomodoro()"><i class="fas fa-redo"></i> Reset</button>
+        <button class="btn" onclick="startstudy()"><i class="fas fa-play"></i> Start</button>
+        <button class="btn btn-outline" onclick="pausestudy()"><i class="fas fa-pause"></i> Pause</button>
+        <button class="btn btn-outline" onclick="resetstudy()"><i class="fas fa-redo"></i> Reset</button>
       </div>
     </div>
   </div>
@@ -835,8 +835,8 @@ cat > public/index.html << 'EOF'
         <p>Welcome back, <span id="current-user-name" style="color: var(--accent-green); font-weight: 600;"></span>!</p>
       </div>
       <div style="display: flex; gap: 1rem;">
-        <button class="btn btn-outline" onclick="showPomodoroModal()">
-          <i class="fas fa-clock"></i> Pomodoro
+        <button class="btn btn-outline" onclick="showstudyModal()">
+          <i class="fas fa-clock"></i> study
         </button>
         <button class="btn btn-outline" onclick="logout()">
           <i class="fas fa-sign-out-alt"></i> Logout
@@ -919,27 +919,27 @@ cat > public/index.html << 'EOF'
   </div>
 </div>
 
-<!-- Pomodoro Modal -->
-<div id="pomodoro-modal" class="modal">
+<!-- study Modal -->
+<div id="study-modal" class="modal">
   <div class="modal-content">
     <div class="modal-header">
       <h2><i class="fas fa-clock"></i> Study Timer</h2>
-      <span class="close-modal" onclick="closePomodoroModal()">&times;</span>
+      <span class="close-modal" onclick="closestudyModal()">&times;</span>
     </div>
     <div class="study-timer">
-      <div class="timer-display" id="pomodoro-display">25:00</div>
+      <div class="timer-display" id="study-display">25:00</div>
       <div style="text-align: center; margin: 1rem 0;">
-        <span id="pomodoro-phase" style="color: var(--accent-green);">Work Time</span>
+        <span id="study-phase" style="color: var(--accent-green);">Work Time</span>
       </div>
       <div class="timer-controls">
-        <button class="btn" onclick="startPomodoro()"><i class="fas fa-play"></i> Start</button>
-        <button class="btn btn-outline" onclick="pausePomodoro()"><i class="fas fa-pause"></i> Pause</button>
-        <button class="btn btn-outline" onclick="resetPomodoro()"><i class="fas fa-redo"></i> Reset</button>
+        <button class="btn" onclick="startstudy()"><i class="fas fa-play"></i> Start</button>
+        <button class="btn btn-outline" onclick="pausestudy()"><i class="fas fa-pause"></i> Pause</button>
+        <button class="btn btn-outline" onclick="resetstudy()"><i class="fas fa-redo"></i> Reset</button>
       </div>
       <div style="margin-top: 1rem;">
-        <label><input type="radio" name="pomodoro-mode" value="25" checked> 25 min</label>
-        <label><input type="radio" name="pomodoro-mode" value="45"> 45 min</label>
-        <label><input type="radio" name="pomodoro-mode" value="60"> 60 min</label>
+        <label><input type="radio" name="study-mode" value="25" checked> 25 min</label>
+        <label><input type="radio" name="study-mode" value="45"> 45 min</label>
+        <label><input type="radio" name="study-mode" value="60"> 60 min</label>
       </div>
     </div>
   </div>
@@ -958,8 +958,8 @@ cat > public/index.html << 'EOF'
   <div class="logo" style="font-size: 1.8rem; margin-bottom: 1rem;" onclick="showSection('home')">
     <i class="fas fa-graduation-cap"></i> BMC Study Buddy
   </div>
-  <p>Brashier Middle College Student Project</p>
-  <p>© 2025 · Zoom Integration</p>
+  <p>BMC Study Buddy</p>
+  <p>© 2026 · Zoom Integration</p>
   <div style="margin-top: 1rem;">
     <a href="#" style="color: var(--text-secondary); margin: 0 0.5rem;">Privacy</a>
     <a href="#" style="color: var(--text-secondary); margin: 0 0.5rem;">Terms</a>
@@ -995,15 +995,27 @@ cat > public/index.html << 'EOF'
     let nextMessageId = 100;
     let pendingFriendRequests = [];
 
-    let pomodoroTimer = {
-      timeLeft: 25 * 60,
-      isRunning: false,
-      mode: 'work',
-      interval: null,
-      workTime: 25 * 60,
-      breakTime: 5 * 60
-    };
-
+let studyTimer = {
+  timeLeft: 25 * 60,
+  isRunning: false,
+  mode: 'work',
+  interval: null,
+  workTime: 25 * 60,
+  breakTime: 5 * 60
+};// Listen to radio buttons to change work duration
+const radioButtons = document.querySelectorAll('input[name="study-mode"]');
+radioButtons.forEach(radio => {
+  radio.addEventListener('change', (e) => {
+    if (e.target.checked) {
+      const minutes = parseInt(e.target.value);
+      studyTimer.workTime = minutes * 60;
+      if (!studyTimer.isRunning) {
+        studyTimer.timeLeft = studyTimer.workTime;
+        updateStudyDisplay();
+      }
+    }
+  });
+});
     const users = [
       { id: 1, name: 'Landon Duvall', email: 'student_duvala82@bmcchs.org', grade: '11th Grade', classes: ['Honors: Algebra 2', 'Honors: Biology 1'], password: 'bmcstudybuddy', friends: [], avatar: 'https://codehs.com/uploads/6d229f3dd4f00f97da18b41ab82003e9', status: 'online', studyGroups: [] },
       { id: 2, name: 'Zach Burgdorf', email: 'student_burgza45@bmcchs.org', grade: '11th Grade', classes: ['College Prep: English 1', 'College Prep: Biology 1 Advanced'], password: 'bmcstudy buddy', friends: [], avatar: 'https://codehs.com/uploads/9a479d7f74e17c5c22bdf2c742db83e1', status: 'online', studyGroups: [] },
@@ -1349,29 +1361,29 @@ cat > public/index.html << 'EOF'
       } else { if (searchResults) searchResults.style.display = 'none'; }
     };
 
-    // Pomodoro
-    window.startPomodoro = function() {
-      if (pomodoroTimer.isRunning) return;
-      pomodoroTimer.isRunning = true;
-      pomodoroTimer.interval = setInterval(() => {
-        if (pomodoroTimer.timeLeft > 0) { pomodoroTimer.timeLeft--; updatePomodoroDisplay(); }
+    // study
+    window.startstudy = function() {
+      if (studyTimer.isRunning) return;
+      studyTimer.isRunning = true;
+      studyTimer.interval = setInterval(() => {
+        if (studyTimer.timeLeft > 0) { studyTimer.timeLeft--; updatestudyDisplay(); }
         else {
-          if (pomodoroTimer.mode === 'work') { pomodoroTimer.mode = 'break'; pomodoroTimer.timeLeft = pomodoroTimer.breakTime; document.getElementById('pomodoro-phase').innerText = 'Break Time ☕'; showToast('Time for a break!', 'info'); }
-          else { pomodoroTimer.mode = 'work'; pomodoroTimer.timeLeft = pomodoroTimer.workTime; document.getElementById('pomodoro-phase').innerText = 'Work Time 📚'; showToast('Break over! Back to work!', 'info'); }
+          if (studyTimer.mode === 'work') { studyTimer.mode = 'break'; studyTimer.timeLeft = studyTimer.breakTime; document.getElementById('study-phase').innerText = 'Break Time ☕'; showToast('Time for a break!', 'info'); }
+          else { studyTimer.mode = 'work'; studyTimer.timeLeft = studyTimer.workTime; document.getElementById('study-phase').innerText = 'Work Time 📚'; showToast('Break over! Back to work!', 'info'); }
         }
       }, 1000);
     };
-    window.pausePomodoro = function() { pomodoroTimer.isRunning = false; clearInterval(pomodoroTimer.interval); };
-    window.resetPomodoro = function() { pausePomodoro(); pomodoroTimer.mode = 'work'; pomodoroTimer.timeLeft = pomodoroTimer.workTime; document.getElementById('pomodoro-phase').innerText = 'Work Time 📚'; updatePomodoroDisplay(); };
-    function updatePomodoroDisplay() {
-      const minutes = Math.floor(pomodoroTimer.timeLeft / 60);
-      const seconds = pomodoroTimer.timeLeft % 60;
+    window.pausestudy = function() { studyTimer.isRunning = false; clearInterval(studyTimer.interval); };
+    window.resetstudy = function() { pausestudy(); studyTimer.mode = 'work'; studyTimer.timeLeft = studyTimer.workTime; document.getElementById('study-phase').innerText = 'Work Time 📚'; updatestudyDisplay(); };
+    function updatestudyDisplay() {
+      const minutes = Math.floor(studyTimer.timeLeft / 60);
+      const seconds = studyTimer.timeLeft % 60;
       const timeString = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
-      if (document.getElementById('pomodoro-display')) document.getElementById('pomodoro-display').innerText = timeString;
-      if (document.getElementById('pomodoro-display-home')) document.getElementById('pomodoro-display-home').innerText = timeString;
+      if (document.getElementById('study-display')) document.getElementById('study-display').innerText = timeString;
+      if (document.getElementById('study-display-home')) document.getElementById('study-display-home').innerText = timeString;
     }
-    window.showPomodoroModal = function() { document.getElementById('pomodoro-modal').classList.add('active'); updatePomodoroDisplay(); };
-    window.closePomodoroModal = function() { document.getElementById('pomodoro-modal').classList.remove('active'); };
+    window.showstudyModal = function() { document.getElementById('study-modal').classList.add('active'); updatestudyDisplay(); };
+    window.closestudyModal = function() { document.getElementById('study-modal').classList.remove('active'); };
 
     // Auth
     window.showLoginForm = function() { document.getElementById('login-form').style.display = 'block'; document.getElementById('register-form').style.display = 'none'; document.getElementById('forgot-form').style.display = 'none'; };
