@@ -1,899 +1,247 @@
+cat > public/index.html << 'EOF'
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
-  <title>BMC Study Buddy · Zoom Integration</title>
-  <!-- Font Awesome 6 -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BMC Study Buddy</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-  <!-- Emoji Mart for emoji picker -->
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/emoji-mart@latest/css/emoji-mart.css">
-  <!-- Google Fonts -->
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <script src="/socket.io/socket.io.js"></script>
   <style>
-    /* ---------- THEME VARIABLES ---------- */
-    :root {
-      --bg-primary: #0a0a0a;
-      --bg-secondary: #121212;
-      --bg-card: #1e1e1e;
-      --bg-hover: #2a2a2a;
-      --text-primary: #ffffff;
-      --text-secondary: #b0b0b0;
-      --text-muted: #6b6b6b;
-      --border-color: #2a2a2a;
-      --accent-green: #00ff88;
-      --primary-green: #00cc66;
-      --hover-green: #00b359;
-      --danger: #ff4444;
-      --warning: #ffbb33;
-      --success: #00C851;
-      --info: #33b5e5;
-      --google-blue: #4285f4;
-      --google-red: #ea4335;
-      --google-yellow: #fbbc05;
-      --google-green: #34a853;
-      --shadow: 0 8px 16px rgba(0,0,0,0.3);
-    }
-
-    body.light-theme {
-      --bg-primary: #f5f5f5;
-      --bg-secondary: #e8e8e8;
-      --bg-card: #ffffff;
-      --bg-hover: #f0f0f0;
-      --text-primary: #1a1a1a;
-      --text-secondary: #4a4a4a;
-      --text-muted: #6b6b6b;
-      --border-color: #d1d1d1;
-      --accent-green: #00aa55;
-      --primary-green: #008844;
-      --hover-green: #006633;
-      --shadow: 0 8px 16px rgba(0,0,0,0.1);
-    }
-
     * {
       margin: 0;
       padding: 0;
       box-sizing: border-box;
-      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      font-family: 'Inter', sans-serif;
     }
-
     body {
-      background-color: var(--bg-primary);
-      color: var(--text-primary);
-      line-height: 1.5;
-      transition: background-color 0.3s, color 0.3s;
+      background: #0a0a0a;
+      color: white;
       min-height: 100vh;
+    }
+    .login-screen {
       display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    }
+    .login-card {
+      background: white;
+      padding: 40px;
+      border-radius: 20px;
+      width: 100%;
+      max-width: 400px;
+      color: #333;
+    }
+    .login-card h1 {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    .login-card p {
+      text-align: center;
+      margin-bottom: 20px;
+      color: #666;
+    }
+    .login-card select, .login-card input {
+      width: 100%;
+      padding: 12px;
+      margin: 10px 0;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      font-size: 16px;
+    }
+    .login-card button {
+      width: 100%;
+      padding: 12px;
+      background: #667eea;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      margin-top: 10px;
+      font-size: 16px;
+      font-weight: 600;
+    }
+    .login-card button:hover {
+      background: #5a67d8;
+    }
+    .main-app {
+      display: none;
+      height: 100vh;
       flex-direction: column;
     }
-
-    /* Scrollbar Styling */
-    ::-webkit-scrollbar {
-      width: 8px;
-      height: 8px;
-    }
-
-    ::-webkit-scrollbar-track {
-      background: var(--bg-secondary);
-    }
-
-    ::-webkit-scrollbar-thumb {
-      background: var(--primary-green);
-      border-radius: 4px;
-    }
-
-    ::-webkit-scrollbar-thumb:hover {
-      background: var(--hover-green);
-    }
-
-    /* Navigation */
     .navbar {
-      background-color: var(--bg-secondary);
-      padding: 1rem 2rem;
+      background: #16213e;
+      padding: 15px 20px;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      border-bottom: 1px solid var(--border-color);
-      flex-wrap: wrap;
-      gap: 1rem;
-      position: sticky;
-      top: 0;
-      z-index: 1000;
-      backdrop-filter: blur(10px);
-      -webkit-backdrop-filter: blur(10px);
     }
-
     .logo {
-      font-size: 1.5rem;
-      font-weight: 700;
-      color: var(--text-primary);
-      cursor: pointer;
+      font-size: 20px;
+      font-weight: bold;
+    }
+    .logo span { color: #00ff88; }
+    .chat-container {
       display: flex;
-      align-items: center;
-      gap: 0.5rem;
+      height: calc(100vh - 60px);
     }
-
-    .logo i {
-      color: var(--accent-green);
+    .sidebar {
+      width: 260px;
+      background: #16213e;
+      padding: 20px;
+      overflow-y: auto;
     }
-
-    .nav-links {
-      display: flex;
-      gap: 2rem;
-      align-items: center;
-      flex-wrap: wrap;
+    .sidebar h3 {
+      color: #00ff88;
+      margin-bottom: 15px;
+      font-size: 14px;
     }
-
-    .nav-links a {
-      color: var(--text-secondary);
-      text-decoration: none;
-      font-weight: 500;
+    .channel-list, .online-list {
+      list-style: none;
+      margin-bottom: 25px;
+    }
+    .channel-list li, .online-list li {
+      padding: 10px;
+      margin: 5px 0;
       cursor: pointer;
-      transition: all 0.2s;
-      padding: 0.5rem 1rem;
       border-radius: 8px;
+      color: #ccc;
     }
-
-    .nav-links a:hover, .nav-links a.active {
-      color: var(--accent-green);
-      background: var(--bg-hover);
+    .channel-list li:hover, .online-list li:hover {
+      background: #1f2a48;
     }
-
-    .toggle-icons {
-      display: flex;
-      gap: 1rem;
-      margin-left: 1rem;
+    .channel-list li.active {
+      background: #00ff88;
+      color: #16213e;
     }
-
-    .toggle-icons i {
-      color: var(--text-secondary);
-      font-size: 1.3rem;
-      cursor: pointer;
-      transition: all 0.2s;
-      padding: 0.5rem;
-      border-radius: 50%;
-    }
-
-    .toggle-icons i:hover {
-      color: var(--accent-green);
-      background: var(--bg-hover);
-    }
-
-    /* Main Container */
-    .container {
-      max-width: 1400px;
-      margin: 2rem auto;
-      padding: 0 1.5rem;
+    .chat-area {
       flex: 1;
-      width: 100%;
+      display: flex;
+      flex-direction: column;
+      background: #0f0f1a;
     }
-
-    .section {
-      display: none;
-      animation: fadeIn 0.3s ease;
+    .chat-header {
+      padding: 15px 20px;
+      background: #16213e;
+      border-bottom: 1px solid #2a2a3a;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
     }
-
-    .section.active-section {
-      display: block;
+    .chat-header h2 { font-size: 18px; }
+    .chat-actions i {
+      margin-left: 15px;
+      cursor: pointer;
+      font-size: 18px;
     }
-
+    .messages {
+      flex: 1;
+      overflow-y: auto;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .message {
+      max-width: 70%;
+      padding: 10px 15px;
+      border-radius: 15px;
+      word-wrap: break-word;
+      animation: fadeIn 0.2s ease;
+    }
     @keyframes fadeIn {
       from { opacity: 0; transform: translateY(10px); }
       to { opacity: 1; transform: translateY(0); }
     }
-
-    /* Loading Spinner */
-    .loading-spinner {
-      border: 3px solid var(--bg-secondary);
-      border-top: 3px solid var(--accent-green);
-      border-radius: 50%;
-      width: 40px;
-      height: 40px;
-      animation: spin 1s linear infinite;
-      margin: 2rem auto;
-    }
-
-    @keyframes spin {
-      0% { transform: rotate(0deg); }
-      100% { transform: rotate(360deg); }
-    }
-
-    /* Cards */
-    .card-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-      gap: 2rem;
-      margin: 2rem 0;
-    }
-
-    .card {
-      background: var(--bg-card);
-      border-radius: 24px;
-      padding: 2rem 1.5rem;
-      box-shadow: var(--shadow);
-      transition: all 0.3s;
-      border: 1px solid var(--border-color);
-    }
-
-    .card:hover {
-      transform: translateY(-4px);
-      box-shadow: 0 12px 24px rgba(0,0,0,0.4);
-    }
-
-    .card i {
-      font-size: 2.5rem;
-      color: var(--accent-green);
-      margin-bottom: 1.2rem;
-    }
-
-    .btn {
-      background: var(--primary-green);
-      color: white;
-      border: none;
-      padding: 0.8rem 2rem;
-      border-radius: 40px;
-      font-weight: 600;
-      font-size: 1rem;
-      cursor: pointer;
-      transition: all 0.2s;
-      display: inline-block;
-      border: 2px solid transparent;
-    }
-
-    .btn-outline {
-      background: transparent;
-      border: 2px solid var(--primary-green);
-      color: var(--text-primary);
-    }
-
-    .btn:hover {
-      background: var(--hover-green);
-      transform: scale(1.02);
-    }
-
-    .btn-outline:hover {
-      background: var(--primary-green);
-      color: white;
-    }
-
-    .btn:disabled {
-      opacity: 0.5;
-      cursor: not-allowed;
-    }
-
-    /* Zoom Button */
-    .zoom-meet-btn {
-      background: var(--google-blue);
-      color: white;
-      border: none;
-      padding: 0.8rem 2rem;
-      border-radius: 40px;
-      font-weight: 600;
-      font-size: 1rem;
-      cursor: pointer;
-      transition: all 0.2s;
-      display: inline-flex;
-      align-items: center;
-      gap: 0.5rem;
-      border: 2px solid transparent;
-    }
-
-    .zoom-meet-btn:hover {
-      background: #3367d6;
-      transform: scale(1.02);
-    }
-
-    .zoom-meet-btn i {
-      font-size: 1.2rem;
-    }
-
-    /* Auth Card */
-    .auth-card {
-      background: var(--bg-card);
-      max-width: 500px;
-      margin: 2rem auto;
-      padding: 2.5rem;
-      border-radius: 28px;
-      border: 1px solid var(--border-color);
-      box-shadow: var(--shadow);
-    }
-
-    .form-group {
-      margin-bottom: 1.5rem;
-    }
-
-    .form-group label {
-      display: block;
-      margin-bottom: 0.4rem;
-      color: var(--text-secondary);
-      font-weight: 500;
-    }
-
-    .form-group input, .form-group select, .form-group textarea {
-      width: 100%;
-      background: var(--bg-secondary);
-      border: 1px solid var(--border-color);
-      padding: 0.9rem 1rem;
-      border-radius: 14px;
-      color: var(--text-primary);
-      font-size: 1rem;
-      transition: border-color 0.2s;
-    }
-
-    .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
-      outline: none;
-      border-color: var(--accent-green);
-    }
-
-    /* Course Checkboxes */
-    .course-checkboxes {
-      background: var(--bg-secondary);
-      border: 1px solid var(--border-color);
-      border-radius: 14px;
-      padding: 1rem;
-      max-height: 300px;
-      overflow-y: auto;
-    }
-
-    .category-group {
-      margin-bottom: 1rem;
-    }
-
-    .category-title {
-      color: var(--accent-green);
-      font-weight: 600;
-      margin-bottom: 0.3rem;
-      font-size: 0.95rem;
-    }
-
-    .checkbox-item {
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-      margin-bottom: 0.3rem;
-      padding: 0.3rem 0.5rem;
-      border-radius: 6px;
-      transition: background 0.2s;
-    }
-
-    .checkbox-item:hover {
-      background: var(--bg-hover);
-    }
-
-    .checkbox-item input[type="checkbox"] {
-      width: auto;
-      accent-color: var(--accent-green);
-      cursor: pointer;
-    }
-
-    .checkbox-item label {
-      cursor: pointer;
-      color: var(--text-secondary);
-    }
-
-    .toggle-link {
-      text-align: center;
-      margin-top: 1.2rem;
-      color: var(--text-secondary);
-      cursor: pointer;
-      transition: color 0.2s;
-    }
-
-    .toggle-link:hover {
-      color: var(--accent-green);
-    }
-
-    .error-msg {
-      color: var(--danger);
-      margin-top: 0.5rem;
-      font-size: 0.9rem;
-    }
-
-    .success-msg {
-      color: var(--success);
-      margin-top: 0.5rem;
-      font-size: 0.9rem;
-    }
-
-    /* Dashboard Layout */
-    .dashboard-panels {
-      display: flex;
-      gap: 1.5rem;
-      height: calc(100vh - 200px);
-      min-height: 600px;
-    }
-
-    .left-sidebar {
-      flex: 0 0 280px;
-      background: var(--bg-card);
-      border-radius: 24px;
-      padding: 1.5rem 0.8rem;
-      overflow-y: auto;
-      border: 1px solid var(--border-color);
-    }
-
-    .sidebar-section {
-      margin-bottom: 1.8rem;
-    }
-
-    .sidebar-heading {
-      color: var(--text-secondary);
-      font-size: 0.9rem;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-      margin-bottom: 0.5rem;
-      padding-left: 0.5rem;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-
-    .sidebar-heading i {
-      color: var(--accent-green);
-      cursor: pointer;
-      font-size: 1rem;
-    }
-
-    .channel-list, .class-list, .dm-list {
-      list-style: none;
-    }
-
-    .channel-item, .class-item, .dm-item {
-      padding: 0.6rem 1rem;
-      margin: 0.2rem 0;
-      border-radius: 12px;
-      color: var(--text-secondary);
-      cursor: pointer;
-      transition: all 0.2s;
-      display: flex;
-      align-items: center;
-      gap: 0.6rem;
-      position: relative;
-    }
-
-    .channel-item i, .class-item i, .dm-item i {
-      width: 1.5rem;
-      color: var(--accent-green);
-    }
-
-    .channel-item:hover, .class-item:hover, .dm-item:hover {
-      background: var(--bg-hover);
-      color: var(--text-primary);
-    }
-
-    .channel-item.active, .class-item.active, .dm-item.active {
-      background: var(--primary-green);
-      color: white;
-    }
-
-    .channel-item.active i, .class-item.active i, .dm-item.active i {
-      color: white;
-    }
-
-    .badge {
-      background: var(--danger);
-      color: white;
-      font-size: 0.7rem;
-      padding: 0.2rem 0.5rem;
-      border-radius: 10px;
-      margin-left: auto;
-    }
-
-    .center-panel {
-      flex: 1;
-      background: var(--bg-card);
-      border-radius: 24px;
-      display: flex;
-      flex-direction: column;
-      overflow: hidden;
-      border: 1px solid var(--border-color);
-      position: relative;
-    }
-
-    .chat-header {
-      padding: 1rem 1.5rem;
-      border-bottom: 1px solid var(--border-color);
-      font-weight: 600;
-      background: var(--primary-green);
-      color: white;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-
-    .chat-header-actions {
-      display: flex;
-      gap: 1rem;
-    }
-
-    .chat-header-actions i {
-      cursor: pointer;
-      transition: transform 0.2s;
-    }
-
-    .chat-header-actions i:hover {
-      transform: scale(1.1);
-    }
-
-    .message-feed {
-      flex: 1;
-      padding: 1.5rem;
-      overflow-y: auto;
-      display: flex;
-      flex-direction: column-reverse;
-      gap: 1rem;
-    }
-
-    .message {
-      background: var(--bg-secondary);
-      padding: 0.8rem 1.2rem;
-      border-radius: 18px;
-      max-width: 80%;
-      align-self: flex-start;
-      animation: slideIn 0.2s ease;
-      position: relative;
-    }
-
-    .message.own-message {
-      background: var(--primary-green);
+    .message.own {
+      background: #00ff88;
+      color: #16213e;
       align-self: flex-end;
-      color: white;
     }
-
-    .message.own-message .meta .sender {
-      color: rgba(255,255,255,0.9);
+    .message.other {
+      background: #2a2a3a;
+      align-self: flex-start;
     }
-
-    /* Zoom message styling */
-    .message.meet-message {
-      background: rgba(66, 133, 244, 0.1);
-      border-left: 4px solid var(--google-blue);
-      max-width: 90%;
+    .message.system {
+      background: #333;
+      align-self: center;
+      font-size: 12px;
+      max-width: 80%;
     }
-
-    .meet-code {
-      background: var(--bg-primary);
-      padding: 0.5rem 1rem;
-      border-radius: 12px;
-      font-family: monospace;
-      font-size: 1.2rem;
-      display: inline-block;
-      margin: 0.5rem 0;
-      border: 1px solid var(--google-blue);
-      color: var(--google-blue);
-      font-weight: bold;
-    }
-
-    .meet-link-btn {
-      background: var(--google-blue);
-      color: white;
-      border: none;
-      padding: 0.8rem 1.5rem;
-      border-radius: 40px;
-      font-size: 1rem;
-      font-weight: 600;
-      cursor: pointer;
-      margin-top: 0.8rem;
-      display: inline-flex;
-      align-items: center;
-      gap: 0.8rem;
-      text-decoration: none;
-      transition: all 0.2s;
-      border: 2px solid transparent;
-    }
-
-    .meet-link-btn:hover {
-      background: #3367d6;
-      transform: scale(1.02);
-      box-shadow: 0 4px 12px rgba(66, 133, 244, 0.3);
-    }
-
-    @keyframes slideIn {
-      from { opacity: 0; transform: translateX(-10px); }
-      to { opacity: 1; transform: translateX(0); }
-    }
-
-    .message .meta {
-      display: flex;
-      gap: 0.8rem;
-      align-items: baseline;
-      margin-bottom: 0.3rem;
-    }
-
     .message .sender {
-      font-weight: 600;
-      color: var(--accent-green);
+      font-size: 12px;
+      margin-bottom: 5px;
+      opacity: 0.8;
     }
-
     .message .time {
-      font-size: 0.7rem;
-      color: var(--text-muted);
+      font-size: 10px;
+      margin-top: 5px;
+      opacity: 0.6;
     }
-
-    .message.own-message .time {
-      color: rgba(255,255,255,0.7);
-    }
-
-    .message .reactions {
-      display: flex;
-      gap: 0.3rem;
-      margin-top: 0.5rem;
-      flex-wrap: wrap;
-    }
-
-    .reaction-badge {
-      background: var(--bg-hover);
-      padding: 0.2rem 0.5rem;
-      border-radius: 12px;
-      font-size: 0.8rem;
-      cursor: pointer;
-      transition: all 0.2s;
-    }
-
-    .reaction-badge:hover {
-      background: var(--primary-green);
-      color: white;
-    }
-
     .message img {
       max-width: 200px;
-      border-radius: 8px;
+      max-height: 200px;
+      border-radius: 10px;
       cursor: pointer;
+      margin-top: 5px;
     }
-
-    .typing-indicator {
-      padding: 0.5rem 1.5rem;
-      color: var(--text-secondary);
-      font-style: italic;
-      min-height: 2rem;
-      font-size: 0.9rem;
-    }
-
-    .chat-input-area {
+    .input-area {
+      padding: 20px;
+      background: #16213e;
       display: flex;
-      gap: 0.8rem;
-      padding: 1rem 1.5rem;
-      border-top: 1px solid var(--border-color);
-      background: var(--bg-card);
+      gap: 10px;
       align-items: center;
-    }
-
-    .chat-input-area input {
-      flex: 1;
-      background: var(--bg-secondary);
-      border: 1px solid var(--border-color);
-      padding: 0.9rem 1.2rem;
-      border-radius: 40px;
-      color: var(--text-primary);
-      font-size: 1rem;
-    }
-
-    .chat-input-area input:focus {
-      outline: none;
-      border-color: var(--accent-green);
-    }
-
-    .chat-input-area button {
-      background: var(--primary-green);
-      border: none;
-      width: 48px;
-      height: 48px;
-      border-radius: 50%;
-      color: white;
-      font-size: 1.2rem;
-      cursor: pointer;
-      transition: all 0.2s;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .chat-input-area button:hover {
-      background: var(--hover-green);
-      transform: scale(1.05);
-    }
-
-    .chat-input-area button#emoji-btn {
-      background: var(--bg-secondary);
-      color: var(--text-primary);
-    }
-
-    .chat-input-area button#zoom-meet-btn {
-      background: var(--google-blue);
-    }
-
-    .chat-input-area button#zoom-meet-btn:hover {
-      background: #3367d6;
-    }
-
-    .right-sidebar {
-      flex: 0 0 250px;
-      background: var(--bg-card);
-      border-radius: 24px;
-      padding: 1.5rem 1rem;
-      border: 1px solid var(--border-color);
-      overflow-y: auto;
-    }
-
-    .online-list {
-      list-style: none;
-      margin-top: 1rem;
-    }
-
-    .online-list li {
-      padding: 0.4rem 0;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 0.5rem;
-      transition: background 0.2s;
-      padding: 0.5rem;
-      border-radius: 8px;
-    }
-
-    .online-list li:hover {
-      background: var(--bg-hover);
-    }
-
-    .online-list li .name {
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-    }
-
-    .online-dot {
-      color: var(--success);
-      font-size: 0.8rem;
-    }
-
-    .add-friend {
-      color: var(--accent-green);
-      cursor: pointer;
-      font-size: 1rem;
-      transition: transform 0.2s;
-    }
-
-    .add-friend:hover {
-      transform: scale(1.2);
-      color: var(--hover-green);
-    }
-
-    /* Pomodoro Timer */
-    .pomodoro-timer {
-      background: var(--bg-card);
-      border-radius: 24px;
-      padding: 2rem;
-      margin: 2rem 0;
-      border: 1px solid var(--border-color);
-    }
-
-    .timer-display {
-      font-size: 4rem;
-      font-weight: 700;
-      text-align: center;
-      color: var(--accent-green);
-      margin: 1rem 0;
-    }
-
-    .timer-controls {
-      display: flex;
-      gap: 1rem;
-      justify-content: center;
       flex-wrap: wrap;
     }
-
-    /* Study Resources */
-    .resource-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-      gap: 2rem;
-      margin: 2rem 0;
+    .input-area input {
+      flex: 1;
+      padding: 12px;
+      border: none;
+      border-radius: 25px;
+      background: #2a2a3a;
+      color: white;
+      font-size: 14px;
     }
-
-    .resource-card {
-      background: var(--bg-card);
-      border-radius: 24px;
-      padding: 1.5rem;
-      border: 1px solid var(--border-color);
-    }
-
-    .resource-card h3 {
-      margin-bottom: 1rem;
-      color: var(--accent-green);
-    }
-
-    .resource-list {
-      list-style: none;
-    }
-
-    .resource-list li {
-      padding: 0.8rem 0;
-      border-bottom: 1px solid var(--border-color);
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-
-    .resource-list li:last-child {
-      border-bottom: none;
-    }
-
-    .resource-list a {
-      color: var(--text-primary);
-      text-decoration: none;
-    }
-
-    .resource-list a:hover {
-      color: var(--accent-green);
-    }
-
-    /* Search Bar */
-    .search-bar {
-      position: relative;
-      margin-bottom: 1rem;
-    }
-
-    .search-bar input {
-      width: 100%;
-      padding: 0.8rem 1rem 0.8rem 2.5rem;
-      border-radius: 40px;
-      background: var(--bg-secondary);
-      border: 1px solid var(--border-color);
-      color: var(--text-primary);
-    }
-
-    .search-bar i {
-      position: absolute;
-      left: 1rem;
-      top: 50%;
-      transform: translateY(-50%);
-      color: var(--text-muted);
-    }
-
-    .search-results {
-      position: absolute;
-      top: 100%;
-      left: 0;
-      right: 0;
-      background: var(--bg-card);
-      border: 1px solid var(--border-color);
-      border-radius: 14px;
-      margin-top: 0.5rem;
-      max-height: 300px;
-      overflow-y: auto;
-      z-index: 1000;
-    }
-
-    .search-result-item {
-      padding: 0.8rem 1rem;
+    .input-area input:focus { outline: none; }
+    .input-area button {
+      padding: 12px 20px;
+      background: #00ff88;
+      border: none;
+      border-radius: 25px;
+      color: #16213e;
+      font-weight: bold;
       cursor: pointer;
-      border-bottom: 1px solid var(--border-color);
+      transition: transform 0.2s;
     }
-
-    .search-result-item:hover {
-      background: var(--bg-hover);
+    .input-area button:hover { transform: scale(1.05); }
+    .online-dot {
+      display: inline-block;
+      width: 8px;
+      height: 8px;
+      background: #00ff88;
+      border-radius: 50%;
+      margin-right: 8px;
     }
-
-    .search-result-item small {
-      color: var(--text-muted);
-      display: block;
+    .toast-container {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      z-index: 9999;
     }
-
-    /* Emoji Picker */
-    .emoji-picker {
-      position: absolute;
-      bottom: 80px;
-      right: 2rem;
-      z-index: 1000;
-      display: none;
+    .toast {
+      background: #333;
+      padding: 10px 20px;
+      border-radius: 8px;
+      margin-top: 5px;
+      animation: slideIn 0.3s ease;
     }
-
-    .emoji-picker.active {
-      display: block;
+    @keyframes slideIn {
+      from { transform: translateX(100%); opacity: 0; }
+      to { transform: translateX(0); opacity: 1; }
     }
-
-    /* Modal */
     .modal {
       display: none;
       position: fixed;
@@ -903,1735 +251,237 @@
       bottom: 0;
       background: rgba(0,0,0,0.8);
       z-index: 2000;
-      align-items: center;
       justify-content: center;
+      align-items: center;
     }
-
-    .modal.active {
-      display: flex;
-    }
-
+    .modal.active { display: flex; }
     .modal-content {
-      background: var(--bg-card);
-      padding: 2rem;
-      border-radius: 28px;
-      max-width: 500px;
-      width: 90%;
-      max-height: 80vh;
-      overflow-y: auto;
-    }
-
-    .modal-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 1rem;
-    }
-
-    .close-modal {
-      font-size: 1.5rem;
-      cursor: pointer;
-      color: var(--text-muted);
-    }
-
-    .close-modal:hover {
-      color: var(--danger);
-    }
-
-    /* Toast Notifications */
-    .toast-container {
-      position: fixed;
-      bottom: 2rem;
-      right: 2rem;
-      z-index: 3000;
-    }
-
-    .toast {
-      background: var(--bg-card);
-      color: var(--text-primary);
-      padding: 1rem 1.5rem;
-      border-radius: 14px;
-      margin-top: 0.5rem;
-      border-left: 4px solid var(--accent-green);
-      box-shadow: var(--shadow);
-      animation: slideInRight 0.3s ease;
-      display: flex;
-      align-items: center;
-      gap: 1rem;
-    }
-
-    .toast.error {
-      border-left-color: var(--danger);
-    }
-
-    .toast.success {
-      border-left-color: var(--success);
-    }
-
-    .toast.warning {
-      border-left-color: var(--warning);
-    }
-
-    @keyframes slideInRight {
-      from { transform: translateX(100%); opacity: 0; }
-      to { transform: translateX(0); opacity: 1; }
-    }
-
-    /* Footer */
-    .footer {
-      background: var(--bg-secondary);
-      padding: 2rem;
-      text-align: center;
-      color: var(--text-secondary);
-      border-top: 1px solid var(--border-color);
-      margin-top: 3rem;
-    }
-
-    /* Responsive */
-    @media (max-width: 1024px) {
-      .dashboard-panels {
-        flex-direction: column;
-        height: auto;
-      }
-      
-      .left-sidebar, .right-sidebar {
-        flex: auto;
-        width: 100%;
-      }
-    }
-
-    @media (max-width: 768px) {
-      .navbar {
-        flex-direction: column;
-        padding: 1rem;
-      }
-      
-      .nav-links {
-        justify-content: center;
-        gap: 1rem;
-      }
-      
-      .message {
-        max-width: 95%;
-      }
-      
-      .chat-input-area {
-        flex-wrap: wrap;
-      }
-      
-      .chat-input-area button {
-        width: 44px;
-        height: 44px;
-      }
-      
-      .timer-display {
-        font-size: 3rem;
-      }
-    }
-
-    @media (max-width: 480px) {
-      .container {
-        padding: 0 1rem;
-      }
-      
-      .auth-card {
-        padding: 1.5rem;
-      }
-      
-      .card-grid {
-        grid-template-columns: 1fr;
-      }
+      background: #2a2a3a;
+      padding: 20px;
+      border-radius: 12px;
+      max-width: 90%;
+      max-height: 90%;
+      overflow: auto;
     }
   </style>
 </head>
 <body>
 
-<!-- Navigation -->
-<div class="navbar">
-  <div class="logo" onclick="showSection('home')">
-    <i class="fas fa-graduation-cap"></i>
-    <span>BMC Study Buddy</span>
-  </div>
-  <div class="nav-links">
-    <a data-section="home" class="active"><i class="fas fa-home"></i> Home</a>
-    <a data-section="about"><i class="fas fa-info-circle"></i> About</a>
-    <a data-section="how"><i class="fas fa-question-circle"></i> How It Works</a>
-    <a data-section="join"><i class="fas fa-sign-in-alt"></i> Join</a>
-    <a data-section="dashboard" id="dashboard-nav-link" style="display:none;"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
-    <a data-section="resources" id="resources-nav-link" style="display:none;"><i class="fas fa-book"></i> Resources</a>
-    <div class="toggle-icons">
-      <i class="fas fa-sun" id="theme-toggle" onclick="toggleTheme()" title="Toggle theme"></i>
-      <i class="fas fa-heart" id="friends-toggle" onclick="toggleFriendsMode()" title="Friends mode"></i>
-      <i class="fas fa-bell" id="notifications-toggle" onclick="showNotifications()" title="Notifications"></i>
-    </div>
+<div id="login-screen" class="login-screen">
+  <div class="login-card">
+    <h1>📚 BMC Study Buddy</h1>
+    <p>Real-time chat for students</p>
+    <select id="user-select">
+      <option value="Landon Duvall|bmcstudybuddy">Landon Duvall</option>
+      <option value="Zach Burgdorf|bmcstudy buddy">Zach Burgdorf</option>
+      <option value="Jaxon Maddox|bmcstudybuddy">Jaxon Maddox</option>
+    </select>
+    <input type="password" id="password" placeholder="Password">
+    <button onclick="login()">Join Chat →</button>
   </div>
 </div>
 
-<!-- Main Container -->
-<div class="container">
-  <!-- HOME SECTION -->
-  <div id="home-section" class="section active-section">
-    <div class="hero" style="text-align: center; margin-bottom: 3rem;">
-      <h1 style="font-size: 3.5rem; margin-bottom: 1rem;">Welcome to <span style="color: var(--accent-green);">BMC Study Buddy</span></h1>
-      <p style="color: var(--text-secondary); font-size: 1.2rem; max-width: 600px; margin: 0 auto;">
-        Your all-in-one study companion with Zoom integration!
-      </p>
-    </div>
-    
-    <div class="card-grid">
-      <div class="card">
-        <i class="fas fa-users"></i>
-        <h3>Study Together</h3>
-        <p>Join live study sessions with classmates.</p>
-      </div>
-      <div class="card">
-        <i class="fas fa-question-circle"></i>
-        <h3>Homework Help</h3>
-        <p>Get instant help in subject channels.</p>
-      </div>
-      <div class="card">
-        <i class="fab fa-zoom" style="color: var(--google-blue);"></i>
-        <h3>Zoom</h3>
-        <p>Create and share meeting links instantly.</p>
-      </div>
-    </div>
-
-    <!-- Pomodoro Timer Preview -->
-    <div class="pomodoro-timer" style="margin-top: 2rem;">
-      <h2 style="text-align: center; margin-bottom: 1rem;">📚 Study Timer</h2>
-      <div class="timer-display" id="pomodoro-display-home">25:00</div>
-      <div class="timer-controls">
-        <button class="btn" onclick="startPomodoro()"><i class="fas fa-play"></i> Start</button>
-        <button class="btn btn-outline" onclick="pausePomodoro()"><i class="fas fa-pause"></i> Pause</button>
-        <button class="btn btn-outline" onclick="resetPomodoro()"><i class="fas fa-redo"></i> Reset</button>
-      </div>
+<div id="main-app" class="main-app">
+  <div class="navbar">
+    <div class="logo">📚 <span>BMC</span> Study Buddy</div>
+    <div>
+      <button onclick="createZoomMeet()" style="background:#4285f4; padding:8px 16px; border:none; border-radius:20px; color:white; cursor:pointer; margin-right:10px;">🎥 Zoom</button>
+      <button onclick="logout()" style="background:#ff4444; padding:8px 16px; border:none; border-radius:20px; color:white; cursor:pointer;">Logout</button>
     </div>
   </div>
-
-  <!-- ABOUT SECTION -->
-  <div id="about-section" class="section">
-    <h1 style="font-size: 3rem; margin-bottom: 2rem;">About BMC Study Buddy</h1>
-    <div class="card-grid">
-      <div class="card">
-        <i class="fas fa-users"></i>
-        <h2>Who We Are</h2>
-        <p>"For students, by students." A collaborative environment built by BMC students.</p>
-      </div>
-      <div class="card">
-        <i class="fas fa-bullseye"></i>
-        <h2>Our Mission</h2>
-        <p>Helping students succeed through collaboration and peer support.</p>
-      </div>
-      <div class="card">
-        <i class="fas fa-heart"></i>
-        <h2>Community</h2>
-        <p>A supportive study environment where students help each other.</p>
-      </div>
+  <div class="chat-container">
+    <div class="sidebar">
+      <h3>📢 CHANNELS</h3>
+      <ul class="channel-list" id="channel-list"></ul>
+      <h3>👥 ONLINE (<span id="online-count">0</span>)</h3>
+      <ul class="online-list" id="online-list"></ul>
     </div>
-  </div>
-
-  <!-- HOW IT WORKS SECTION -->
-  <div id="how-section" class="section">
-    <h1 style="font-size: 3rem; text-align: center; margin-bottom: 2rem;">How It Works</h1>
-    <div class="steps-container" style="display: flex; flex-wrap: wrap; gap: 2rem; justify-content: center;">
-      <div class="card" style="flex: 1 1 200px; text-align: center;">
-        <div class="step-number" style="background: var(--accent-green); width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 1rem; color: white; font-weight: bold;">1</div>
-        <i class="fas fa-user-plus"></i>
-        <h3>Create Account</h3>
-        <p>Sign up with your school email</p>
+    <div class="chat-area">
+      <div class="chat-header">
+        <h2 id="current-channel">Global Lounge</h2>
       </div>
-      <div class="card" style="flex: 1 1 200px; text-align: center;">
-        <div class="step-number" style="background: var(--accent-green); width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 1rem; color: white; font-weight: bold;">2</div>
-        <i class="fas fa-book-open"></i>
-        <h3>Select Classes</h3>
-        <p>Choose your current courses</p>
-      </div>
-      <div class="card" style="flex: 1 1 200px; text-align: center;">
-        <div class="step-number" style="background: var(--accent-green); width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 1rem; color: white; font-weight: bold;">3</div>
-        <i class="fas fa-comments"></i>
-        <h3>Join Channels</h3>
-        <p>Participate in discussions</p>
-      </div>
-      <div class="card" style="flex: 1 1 200px; text-align: center;">
-        <div class="step-number" style="background: var(--accent-green); width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 1rem; color: white; font-weight: bold;">4</div>
-        <i class="fab fa-zoom" style="color: var(--google-blue);"></i>
-        <h3>Zoom</h3>
-        <p>Create and share meeting links</p>
-      </div>
-    </div>
-  </div>
-
-  <!-- JOIN / LOGIN SECTION -->
-  <div id="join-section" class="section">
-    <div class="auth-card">
-      <h2 style="margin-bottom: 1.5rem; text-align: center;">Welcome to BMC Study Buddy</h2>
-      
-      <!-- Login Form -->
-      <div id="login-form">
-        <div class="form-group">
-          <label><i class="fas fa-envelope"></i> School email (@bmcchs.org)</label>
-          <input type="email" id="login-email" placeholder="student@bmcchs.org">
-        </div>
-        <div class="form-group">
-          <label><i class="fas fa-lock"></i> Password</label>
-          <input type="password" id="login-password" placeholder="••••••••">
-        </div>
-        <div class="form-group">
-          <label style="display: flex; align-items: center; gap: 0.5rem;">
-            <input type="checkbox" id="remember-me"> Remember me
-          </label>
-        </div>
-        <button class="btn" style="width:100%;" onclick="handleLogin()">
-          <i class="fas fa-sign-in-alt"></i> Log In
-        </button>
-        <div class="toggle-link" onclick="showRegisterForm()">
-          Don't have an account? Register
-        </div>
-        <div class="toggle-link" onclick="showForgotPassword()">
-          Forgot password?
-        </div>
-        <div id="login-error" class="error-msg"></div>
-      </div>
-
-      <!-- Register Form -->
-      <div id="register-form" style="display:none;">
-        <div class="form-group">
-          <label><i class="fas fa-user"></i> Full name</label>
-          <input type="text" id="reg-name" placeholder="John Doe">
-        </div>
-        <div class="form-group">
-          <label><i class="fas fa-envelope"></i> School email (@bmcchs.org)</label>
-          <input type="email" id="reg-email" placeholder="student@bmcchs.org">
-        </div>
-        <div class="form-group">
-          <label><i class="fas fa-graduation-cap"></i> Grade</label>
-          <select id="reg-grade">
-            <option>9th Grade</option>
-            <option>10th Grade</option>
-            <option>11th Grade</option>
-            <option>12th Grade</option>
-          </select>
-        </div>
-        <div class="form-group">
-          <label><i class="fas fa-book"></i> Select your classes</label>
-          <div id="course-checkboxes-container" class="course-checkboxes"></div>
-        </div>
-        <div class="form-group">
-          <label><i class="fas fa-lock"></i> Password</label>
-          <input type="password" id="reg-password" placeholder="••••••••">
-          <small style="color: var(--text-muted);">Minimum 8 characters</small>
-        </div>
-        <div class="form-group">
-          <label><i class="fas fa-lock"></i> Confirm Password</label>
-          <input type="password" id="reg-confirm-password" placeholder="••••••••">
-        </div>
-        <button class="btn" style="width:100%;" onclick="handleRegister()">
-          <i class="fas fa-user-plus"></i> Register
-        </button>
-        <div class="toggle-link" onclick="showLoginForm()">
-          Back to login
-        </div>
-        <div id="register-error" class="error-msg"></div>
-      </div>
-
-      <!-- Forgot Password Form -->
-      <div id="forgot-form" style="display:none;">
-        <div class="form-group">
-          <label><i class="fas fa-envelope"></i> School email</label>
-          <input type="email" id="forgot-email" placeholder="student@bmcchs.org">
-        </div>
-        <button class="btn" style="width:100%;" onclick="handleForgotPassword()">
-          <i class="fas fa-paper-plane"></i> Send Reset Link
-        </button>
-        <div class="toggle-link" onclick="showLoginForm()">
-          Back to login
-        </div>
-        <div id="forgot-error" class="error-msg"></div>
-        <div id="forgot-success" class="success-msg"></div>
-      </div>
-    </div>
-  </div>
-
-  <!-- DASHBOARD SECTION -->
-  <div id="dashboard-section" class="section">
-    <div class="dashboard-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; flex-wrap: wrap; gap: 1rem;">
-      <div>
-        <h2><i class="fas fa-tachometer-alt" style="color: var(--accent-green);"></i> Study Dashboard</h2>
-        <p>Welcome back, <span id="current-user-name" style="color: var(--accent-green); font-weight: 600;"></span>!</p>
-      </div>
-      <div style="display: flex; gap: 1rem;">
-        <button class="btn btn-outline" onclick="showPomodoroModal()">
-          <i class="fas fa-clock"></i> Pomodoro
-        </button>
-        <button class="btn btn-outline" onclick="logout()">
-          <i class="fas fa-sign-out-alt"></i> Logout
-        </button>
-      </div>
-    </div>
-
-    <!-- Search Bar -->
-    <div class="search-bar">
-      <i class="fas fa-search"></i>
-      <input type="text" id="global-search" placeholder="Search messages, users, or resources..." oninput="handleSearch(this.value)">
-      <div id="search-results" class="search-results" style="display:none;"></div>
-    </div>
-
-    <div class="dashboard-panels">
-      <!-- Left Sidebar -->
-      <div class="left-sidebar">
-        <!-- Channels Section -->
-        <div class="sidebar-section">
-          <div class="sidebar-heading">
-            <span><i class="fas fa-hashtag"></i> Channels</span>
-            <i class="fas fa-plus" onclick="createChannel()" title="Create channel"></i>
-          </div>
-          <ul class="channel-list" id="channel-list"></ul>
-        </div>
-
-        <!-- Your Classes Section -->
-        <div class="sidebar-section">
-          <div class="sidebar-heading">
-            <span><i class="fas fa-book"></i> Your Classes</span>
-            <i class="fas fa-sync" onclick="refreshClasses()" title="Refresh"></i>
-          </div>
-          <ul class="class-list" id="class-list"></ul>
-        </div>
-
-        <!-- Direct Messages Section -->
-        <div class="sidebar-section">
-          <div class="sidebar-heading">
-            <span><i class="fas fa-envelope"></i> Direct Messages</span>
-            <i class="fas fa-user-plus" onclick="startNewDM()" title="New message"></i>
-          </div>
-          <ul class="dm-list" id="dm-list"></ul>
-        </div>
-
-        <!-- Study Groups Section -->
-        <div class="sidebar-section">
-          <div class="sidebar-heading">
-            <span><i class="fas fa-users"></i> Study Groups</span>
-            <i class="fas fa-plus" onclick="createStudyGroup()" title="Create group"></i>
-          </div>
-          <ul class="study-group-list" id="study-group-list"></ul>
-        </div>
-      </div>
-
-      <!-- Center Chat Panel -->
-      <div class="center-panel">
-        <div class="chat-header" id="current-channel-header">
-          <span><i class="fas fa-hashtag"></i> <span id="channel-name">Global Lounge</span></span>
-          <div class="chat-header-actions">
-            <i class="fab fa-zoom" onclick="createZoomMeet()" title="Create Zoom Meet" style="color: white;"></i>
-            <i class="fas fa-calendar-plus" onclick="scheduleCall()" title="Schedule a call"></i>
-            <i class="fas fa-info-circle" onclick="showChannelInfo()" title="Channel info"></i>
-          </div>
-        </div>
-
-        <div class="message-feed" id="message-feed"></div>
-
-        <div class="typing-indicator" id="typing-indicator"></div>
-
-        <div class="chat-input-area">
-          <button id="emoji-btn" onclick="toggleEmojiPicker()"><i class="fas fa-smile"></i></button>
-          <input type="text" id="chat-input" placeholder="Type a message..." autocomplete="off">
-          <button id="upload-btn" onclick="document.getElementById('file-input').click()">
-            <i class="fas fa-paperclip"></i>
-          </button>
-          <button id="zoom-meet-btn" onclick="createZoomMeet()" title="Create Zoom Meet">
-            <i class="fab fa-zoom"></i>
-          </button>
-          <button id="send-btn" onclick="sendMessage()">
-            <i class="fas fa-paper-plane"></i>
-          </button>
-          <input type="file" id="file-input" style="display:none;" accept="image/*, .pdf, .doc, .docx" multiple>
-        </div>
-
-        <!-- Emoji Picker -->
-        <div id="emoji-picker" class="emoji-picker"></div>
-      </div>
-
-      <!-- Right Sidebar - Online Users -->
-      <div class="right-sidebar">
-        <h3><i class="fas fa-circle" style="color: var(--success); font-size: 0.8rem;"></i> Online — <span id="online-count">0</span></h3>
-        <ul class="online-list" id="online-list"></ul>
-
-        <!-- Zoom Quick Access -->
-        <div style="margin-top: 2rem;">
-          <h3><i class="fab fa-zoom" style="color: var(--google-blue);"></i> Quick Meet</h3>
-          <button class="zoom-meet-btn" style="width:100%; margin-top:1rem;" onclick="createZoomMeet()">
-            <i class="fas fa-video"></i> New Zoom Meet
-          </button>
-          <p style="font-size:0.8rem; color:var(--text-secondary); margin-top:0.5rem;">
-            Click to open Zoom Meet. Share the meeting code with others.
-          </p>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- RESOURCES SECTION -->
-  <div id="resources-section" class="section">
-    <h2 style="margin-bottom: 2rem;"><i class="fas fa-book" style="color: var(--accent-green);"></i> Study Resources</h2>
-    
-    <div class="resource-grid">
-      <div class="resource-card">
-        <h3><i class="fas fa-file-pdf"></i> Past Exam Papers</h3>
-        <ul class="resource-list" id="exam-papers-list">
-          <li><a href="#">Math Final 2024 <span class="badge">PDF</span></a></li>
-          <li><a href="#">English Midterm 2024 <span class="badge">PDF</span></a></li>
-          <li><a href="#">Biology Practice Test <span class="badge">PDF</span></a></li>
-        </ul>
-      </div>
-
-      <div class="resource-card">
-        <h3><i class="fas fa-video"></i> Study Guides</h3>
-        <ul class="resource-list" id="study-guides-list">
-          <li><a href="#">Algebra Cheat Sheet <span class="badge">PDF</span></a></li>
-          <li><a href="#">Chemistry Formulas <span class="badge">PDF</span></a></li>
-          <li><a href="#">Essay Writing Guide <span class="badge">Video</span></a></li>
-        </ul>
-      </div>
-
-      <div class="resource-card">
-        <h3><i class="fas fa-link"></i> Useful Links</h3>
-        <ul class="resource-list" id="useful-links-list">
-          <li><a href="#">Khan Academy</a></li>
-          <li><a href="#">Quizlet</a></li>
-          <li><a href="#">Desmos Calculator</a></li>
-        </ul>
-      </div>
-    </div>
-
-    <!-- Resource Upload -->
-    <div class="card" style="margin-top: 2rem;">
-      <h3><i class="fas fa-upload"></i> Share a Resource</h3>
-      <div class="form-group">
-        <input type="text" placeholder="Resource title" id="resource-title">
-      </div>
-      <div class="form-group">
-        <select id="resource-type">
-          <option>Exam Paper</option>
-          <option>Study Guide</option>
-          <option>Link</option>
-        </select>
-      </div>
-      <div class="form-group">
-        <input type="file" id="resource-file" accept=".pdf,.doc,.docx,.ppt,.pptx">
-      </div>
-      <button class="btn" onclick="uploadResource()"><i class="fas fa-upload"></i> Upload</button>
-    </div>
-  </div>
-</div>
-
-<!-- Pomodoro Modal -->
-<div id="pomodoro-modal" class="modal">
-  <div class="modal-content">
-    <div class="modal-header">
-      <h2><i class="fas fa-clock"></i> Pomodoro Timer</h2>
-      <span class="close-modal" onclick="closePomodoroModal()">&times;</span>
-    </div>
-    <div class="pomodoro-timer">
-      <div class="timer-display" id="pomodoro-display">25:00</div>
-      <div style="text-align: center; margin: 1rem 0;">
-        <span id="pomodoro-phase" style="color: var(--accent-green);">Work Time</span>
-      </div>
-      <div class="timer-controls">
-        <button class="btn" onclick="startPomodoro()"><i class="fas fa-play"></i> Start</button>
-        <button class="btn btn-outline" onclick="pausePomodoro()"><i class="fas fa-pause"></i> Pause</button>
-        <button class="btn btn-outline" onclick="resetPomodoro()"><i class="fas fa-redo"></i> Reset</button>
-      </div>
-      <div style="margin-top: 1rem;">
-        <label><input type="radio" name="pomodoro-mode" value="25" checked> 25 min</label>
-        <label><input type="radio" name="pomodoro-mode" value="45"> 45 min</label>
-        <label><input type="radio" name="pomodoro-mode" value="60"> 60 min</label>
+      <div class="messages" id="messages"></div>
+      <div class="input-area">
+        <input type="text" id="message-input" placeholder="Type a message...">
+        <button onclick="sendMessage()">Send →</button>
       </div>
     </div>
   </div>
 </div>
 
-<!-- Image Preview Modal -->
-<div id="image-modal" class="modal" onclick="this.classList.remove('active')">
-  <img id="modal-image" style="max-width: 90%; max-height: 90%; border-radius: 14px;">
-</div>
-
-<!-- Toast Notifications -->
 <div id="toast-container" class="toast-container"></div>
 
-<!-- Footer -->
-<div class="footer">
-  <div class="logo" style="font-size: 1.8rem; margin-bottom: 1rem;" onclick="showSection('home')">
-    <i class="fas fa-graduation-cap"></i> BMC Study Buddy
-  </div>
-  <p>Brashier Middle College Student Project</p>
-  <p>© 2025 · Zoom Integration</p>
-  <div style="margin-top: 1rem;">
-    <a href="#" style="color: var(--text-secondary); margin: 0 0.5rem;">Privacy</a>
-    <a href="#" style="color: var(--text-secondary); margin: 0 0.5rem;">Terms</a>
-    <a href="#" style="color: var(--text-secondary); margin: 0 0.5rem;">Contact</a>
-  </div>
-</div>
-
-<script src="https://cdn.jsdelivr.net/npm/emoji-mart@latest/dist/emoji-mart.js"></script>
 <script>
-  // Socket.IO connection
-  const socket = io({
-    transports: ['polling', 'websocket']
-  });
+const socket = io({ transports: ['polling', 'websocket'] });
+
+let currentUser = null;
+let currentChannel = 'Global Lounge';
+let messages = {};
+let nextMessageId = 1;
+const channels = ['Global Lounge', 'Study Help', 'General', 'Random'];
+
+const users = [
+  { name: 'Landon Duvall', email: 'student_duvala82@bmcchs.org', password: 'bmcstudybuddy', grade: '11th Grade' },
+  { name: 'Zach Burgdorf', email: 'student_burgza45@bmcchs.org', password: 'bmcstudy buddy', grade: '11th Grade' },
+  { name: 'Jaxon Maddox', email: 'jaxonmad66@bmcchs.org', password: 'bmcstudybuddy', grade: '9th Grade' }
+];
+
+function showToast(message, type = 'info') {
+  const container = document.getElementById('toast-container');
+  const toast = document.createElement('div');
+  toast.className = 'toast';
+  toast.textContent = message;
+  container.appendChild(toast);
+  setTimeout(() => toast.remove(), 3000);
+}
+
+function login() {
+  const select = document.getElementById('user-select');
+  const [name, password] = select.value.split('|');
+  const inputPassword = document.getElementById('password').value;
   
-  (function() {
-    // ---------- COURSE DATA ----------
-    const courseCategories = {
-      "ENGLISH": [ "Honors: English 2", "Honors: English 3", "Yearbook Productions", "College Prep: English 1", "College Prep: English 2", "College Prep: English 3 Advanced", "English 4", "Dual Enrollment: ENG 101", "ENG 102", "ENG 205", "Electives: Young Adult Literature", "Poetry", "Contemporary Literature" ],
-      "MATHEMATICS": [ "Honors: Algebra 2", "Honors: Geometry", "Honors: Pre-Calculus", "College Prep: Algebra 1", "Algebra 2 Advanced", "Geometry Advanced", "Precalculus Advanced", "Probability & Statistics", "Dual Enrollment: MAT 110", "MAT 111", "MAT 120", "MAT 140", "MAT 141" ],
-      "SCIENCE": [ "Honors: Biology 1", "Chemistry 1", "Physics 1", "College Prep: Integrated Science", "Biology 1 Advanced", "Anatomy & Physiology", "Dual Enrollment: BIO 101", "BIO 102", "BIO 210", "BIO 211", "CHM 110", "CHM 111", "PHY 201" ],
-      "SOCIAL STUDIES": [ "Honors: Modern World History", "US History & Constitution", "US Government", "Economics", "College Prep: Human Geography", "Dual Enrollment: HIS 104", "HIS 105", "HIS 201", "HIS 202", "PSC 201", "GEO 101" ],
-      "ARTS": [ "College Prep: Art 1", "Art 2", "Art 3", "Dual Enrollment: ART 101", "MUS 105", "THE 101" ],
-      "WORLD LANGUAGES": [ "College Prep: Spanish 1", "Spanish 2", "Spanish 3 Advanced", "Dual Enrollment: SPA 101", "SPA 102" ],
-      "PHYSICAL EDUCATION": [ "Physical Education 1", "Physical Education 2" ],
-      "TECHNOLOGY": [ "Web Page Design", "Introduction to Programming", "Image Editing", "Introduction to AI", "Personal Finance" ],
-      "ELECTIVES": [ "SAT Prep", "Senior Project", "Freshman Success", "Teacher Cadet", "Dual Enrollment: PSY 201", "PSY 203", "SOC 101" ]
-    };
-
-    // ---------- GLOBAL STATE ----------
-    let currentUser = null;
-    let currentChannel = 'Global Lounge';
-    let friendsModeActive = false;
-    let notifications = [];
-    let messageReactions = {};
-    let typingTimer;
-    let nextMessageId = 100;
+  const user = users.find(u => u.name === name && u.password === inputPassword);
+  
+  if (user) {
+    currentUser = { name: user.name, email: user.email, grade: user.grade };
+    socket.emit('user-join', { name: currentUser.name, email: currentUser.email });
     
-    let pomodoroTimer = {
-      timeLeft: 25 * 60,
-      isRunning: false,
-      mode: 'work',
-      interval: null,
-      workTime: 25 * 60,
-      breakTime: 5 * 60
-    };
-
-    // User database
-    const users = [
-      { 
-        id: 1,
-        name: 'Landon Duvall', 
-        email: 'student_duvala82@bmcchs.org', 
-        grade: '11th Grade', 
-        classes: ['Honors: Algebra 2', 'Honors: Biology 1'], 
-        password: 'bmcstudybuddy',
-        friends: [],
-        avatar: 'https://codehs.com/uploads/6d229f3dd4f00f97da18b41ab82003e9',
-        status: 'online',
-        studyGroups: []
-      },
-      { 
-        id: 2,
-        name: 'Zach Burgdorf', 
-        email: 'student_burgza45@bmcchs.org', 
-        grade: '11th Grade', 
-        classes: ['College Prep: English 1', 'College Prep: Biology 1 Advanced'], 
-        password: 'bmcstudy buddy',
-        friends: [],
-        avatar: 'https://codehs.com/uploads/9a479d7f74e17c5c22bdf2c742db83e1',
-        status: 'online',
-        studyGroups: []
-      },
-      { 
-        id: 3,
-        name: 'Jaxon Maddox', 
-        email: 'jaxonmad66@bmcchs.org', 
-        grade: '9th Grade', 
-        classes: ['Honors: English 3', 'Dual Enrollment: MAT 140'], 
-        password: 'bmcstudybuddy',
-        friends: [],
-        avatar: 'https://codehs.com/uploads/479f3258c745682680edfaf33457102f',
-        status: 'online',
-        studyGroups: []
-      }
-    ];
-
-    // Messages storage
-    const messages = {
-      'Global Lounge': [
-        { id: 1, sender: 'System', text: 'Welcome to Global Lounge! 👋', timestamp: Date.now(), reactions: [] }
-      ],
-      'Friends Lounge': [
-        { id: 2, sender: 'System', text: 'Welcome to Friends Lounge! Meet people from all grades.', timestamp: Date.now(), reactions: [] }
-      ]
-    };
-
-    // DOM Elements
-    const sections = document.querySelectorAll('.section');
-    const navLinks = document.querySelectorAll('.nav-links a');
-    const dashboardNav = document.getElementById('dashboard-nav-link');
-    const resourcesNav = document.getElementById('resources-nav-link');
-    const userNameSpan = document.getElementById('current-user-name');
-    const messageFeed = document.getElementById('message-feed');
-    const channelHeader = document.getElementById('current-channel-header');
-    const chatInput = document.getElementById('chat-input');
-    const typingIndicator = document.getElementById('typing-indicator');
-    const onlineListEl = document.getElementById('online-list');
-    const onlineCount = document.getElementById('online-count');
-    const channelListEl = document.getElementById('channel-list');
-    const classListEl = document.getElementById('class-list');
-    const dmListEl = document.getElementById('dm-list');
-    const courseContainer = document.getElementById('course-checkboxes-container');
-    const friendsToggleIcon = document.getElementById('friends-toggle');
-    const toastContainer = document.getElementById('toast-container');
-    const searchInput = document.getElementById('global-search');
-    const searchResults = document.getElementById('search-results');
-
-    // Initialize Emoji Picker
-    function initEmojiPicker() {
-      if (window.EmojiMart) {
-        const picker = new EmojiMart.Picker({
-          onSelect: (emoji) => {
-            chatInput.value += emoji.native;
-            toggleEmojiPicker();
-          },
-          theme: document.body.classList.contains('light-theme') ? 'light' : 'dark',
-          set: 'apple'
-        });
-        document.getElementById('emoji-picker').appendChild(picker);
-      }
-    }
-
-    // Toast notifications
-    function showToast(message, type = 'info') {
-      const toast = document.createElement('div');
-      toast.className = `toast ${type}`;
-      toast.innerHTML = `
-        <i class="fas ${type === 'success' ? 'fa-check-circle' : type === 'error' ? 'fa-exclamation-circle' : 'fa-info-circle'}"></i>
-        <span>${message}</span>
-      `;
-      toastContainer.appendChild(toast);
-      
-      setTimeout(() => {
-        toast.remove();
-      }, 3000);
-    }
-
-    // Build course checkboxes
-    function buildCourseCheckboxes() {
-      if (!courseContainer) return;
-      courseContainer.innerHTML = '';
-      for (let cat in courseCategories) {
-        const groupDiv = document.createElement('div');
-        groupDiv.className = 'category-group';
-        const title = document.createElement('div');
-        title.className = 'category-title';
-        title.innerText = cat;
-        groupDiv.appendChild(title);
-        
-        courseCategories[cat].forEach(course => {
-          const item = document.createElement('div');
-          item.className = 'checkbox-item';
-          const cb = document.createElement('input');
-          cb.type = 'checkbox';
-          cb.value = course;
-          cb.id = 'cb_' + course.replace(/[^a-zA-Z0-9]/g, '_');
-          const label = document.createElement('label');
-          label.htmlFor = cb.id;
-          label.innerText = course;
-          item.appendChild(cb);
-          item.appendChild(label);
-          groupDiv.appendChild(item);
-        });
-        courseContainer.appendChild(groupDiv);
-      }
-    }
-    buildCourseCheckboxes();
-
-    // Theme toggle with persistence
-    window.toggleTheme = function() {
-      document.body.classList.toggle('light-theme');
-      const icon = document.getElementById('theme-toggle');
-      icon.classList.toggle('fa-sun');
-      icon.classList.toggle('fa-moon');
-      localStorage.setItem('theme', document.body.classList.contains('light-theme') ? 'light' : 'dark');
-      
-      const pickerContainer = document.getElementById('emoji-picker');
-      pickerContainer.innerHTML = '';
-      initEmojiPicker();
-    };
-
-    const savedTheme = localStorage.getItem('theme');
-    if (savedTheme === 'light') {
-      document.body.classList.add('light-theme');
-      document.getElementById('theme-toggle').classList.replace('fa-sun', 'fa-moon');
-    }
-
-    // Friends mode toggle
-    window.toggleFriendsMode = function() {
-      if (!currentUser) {
-        showToast('Please log in first', 'warning');
-        return;
-      }
-      friendsModeActive = !friendsModeActive;
-      friendsToggleIcon.style.color = friendsModeActive ? '#ff69b4' : 'var(--text-secondary)';
-      buildChannelList();
-      showToast(friendsModeActive ? 'Friends mode activated' : 'Friends mode deactivated', 'success');
-    };
-
-    // Navigation
-    window.showSection = function(sectionId) {
-      sections.forEach(sec => sec.classList.remove('active-section'));
-      document.getElementById(sectionId + '-section').classList.add('active-section');
-      
-      navLinks.forEach(link => {
-        link.classList.remove('active');
-        if (link.dataset.section === sectionId) {
-          link.classList.add('active');
-        }
-      });
-
-      if (sectionId === 'dashboard' && currentUser) {
-        buildChannelList();
-        loadChannel(currentChannel);
-      }
-    };
-
-    navLinks.forEach(link => {
-      link.addEventListener('click', (e) => {
-        e.preventDefault();
-        const sec = link.dataset.section;
-        if ((sec === 'dashboard' || sec === 'resources') && !currentUser) {
-          showToast('Please log in first', 'warning');
-          showSection('join');
-          return;
-        }
-        showSection(sec);
-      });
-    });
-
-    // Zoom MEET FUNCTIONS
-    window.createZoomMeet = function() {
-      if (!currentUser) {
-        showToast('Please log in first', 'warning');
-        return;
-      }
-      
-      window.open('https://zoom.us/join', '_blank');
-      
-      const meetCode = prompt('Enter the Zoom Meet code:', 'abc-defg-hij');
-      
-      if (meetCode) {
-        let cleanCode = meetCode.trim().replace(/\s+/g, '');
-        
-        if (cleanCode) {
-          const meetLink = `https://zoom.us/j/${cleanCode}`;
-          
-          const meetMessage = {
-            id: nextMessageId++,
-            sender: currentUser.name,
-            text: `📹 Zoom Meet session started! Code: ${cleanCode}`,
-            meetCode: cleanCode,
-            meetLink: meetLink,
-            timestamp: Date.now(),
-            reactions: [],
-            isMeetLink: true,
-            isVideo: true
-          };
-          
-          // Send through Socket.IO instead of local storage
-          socket.emit('send-message', {
-            room: currentChannel,
-            user: currentUser.name,
-            text: `📹 Zoom Meet session started! Code: ${cleanCode} - Join at ${meetLink}`
-          });
-          
-          showToast('Zoom Meet code shared!', 'success');
-        }
-      }
-    };
-
-    window.scheduleCall = function() {
-      if (!currentUser) {
-        showToast('Please log in first', 'warning');
-        return;
-      }
-      
-      const dateTime = prompt('Enter date and time for the call (e.g., "Tomorrow 3:00 PM"):');
-      if (!dateTime) return;
-      
-      const meetCode = prompt('Enter the Zoom Meet code you will use:', 'abc-defg-hij');
-      if (!meetCode) return;
-      
-      const cleanCode = meetCode.trim().replace(/\s+/g, '');
-      const meetLink = `https://zoom.us/j/${cleanCode}`;
-      
-      socket.emit('send-message', {
-        room: currentChannel,
-        user: currentUser.name,
-        text: `📅 Scheduled a Zoom Meet for ${dateTime}! Code: ${cleanCode} - Join at ${meetLink}`
-      });
-      
-      showToast(`Meet scheduled for ${dateTime}`, 'success');
-    };
-
-    function playNotificationSound() {
-      try {
-        const audioContext = new (window.AudioContext || window.webkitAudioContext)();
-        const oscillator = audioContext.createOscillator();
-        const gainNode = audioContext.createGain();
-        
-        oscillator.connect(gainNode);
-        gainNode.connect(audioContext.destination);
-        
-        oscillator.frequency.setValueAtTime(800, audioContext.currentTime);
-        gainNode.gain.setValueAtTime(0.1, audioContext.currentTime);
-        
-        oscillator.start();
-        oscillator.stop(audioContext.currentTime + 0.1);
-      } catch (e) {
-        console.log('Audio not supported');
-      }
-    }
-
-    // Build channel list
-    function buildChannelList() {
-      if (!currentUser) return;
-
-      let channels = ['Global Lounge', 'Announcements'];
-      const gradeChannel = `${currentUser.grade} Channel`;
-      channels.push(gradeChannel);
-      
-      if (!messages[gradeChannel]) {
-        messages[gradeChannel] = [{ 
-          id: nextMessageId++,
-          sender: 'System', 
-          text: `Welcome, ${currentUser.grade} students! 📚`, 
-          timestamp: Date.now(),
-          reactions: []
-        }];
-      }
-
-      if (friendsModeActive) {
-        channels.push('Friends Lounge');
-        if (!messages['Friends Lounge']) {
-          messages['Friends Lounge'] = [{ 
-            id: nextMessageId++,
-            sender: 'System', 
-            text: 'Welcome to Friends Lounge! 👥', 
-            timestamp: Date.now(),
-            reactions: []
-          }];
-        }
-      }
-
-      channelListEl.innerHTML = '';
-      channels.forEach(ch => {
-        const li = document.createElement('li');
-        li.className = 'channel-item' + (ch === currentChannel ? ' active' : '');
-        li.setAttribute('data-channel', ch);
-        li.innerHTML = `<i class="fas fa-hashtag"></i> ${ch}`;
-        li.addEventListener('click', () => switchToChannel(ch));
-        channelListEl.appendChild(li);
-      });
-
-      classListEl.innerHTML = '';
-      if (currentUser.classes && currentUser.classes.length > 0) {
-        currentUser.classes.forEach(cls => {
-          if (!messages[cls]) {
-            messages[cls] = [{ 
-              id: nextMessageId++,
-              sender: 'System', 
-              text: `Welcome to the ${cls} study group! 📖`, 
-              timestamp: Date.now(),
-              reactions: []
-            }];
-          }
-          const li = document.createElement('li');
-          li.className = 'class-item' + (cls === currentChannel ? ' active' : '');
-          li.setAttribute('data-channel', cls);
-          li.innerHTML = `<i class="fas fa-book"></i> ${cls}`;
-          li.addEventListener('click', () => switchToChannel(cls));
-          classListEl.appendChild(li);
-        });
-      }
-
-      dmListEl.innerHTML = '';
-      const user = users.find(u => u.email === currentUser.email);
-      if (user && user.friends && user.friends.length > 0) {
-        user.friends.forEach(friendName => {
-          const dmKey = `dm:${friendName}`;
-          if (!messages[dmKey]) {
-            messages[dmKey] = [{ 
-              id: nextMessageId++,
-              sender: 'System', 
-              text: `Private conversation with ${friendName}`, 
-              timestamp: Date.now(),
-              reactions: []
-            }];
-          }
-          const li = document.createElement('li');
-          li.className = 'dm-item' + (currentChannel === dmKey ? ' active' : '');
-          li.setAttribute('data-channel', dmKey);
-          li.innerHTML = `<i class="fas fa-user"></i> ${friendName}`;
-          li.addEventListener('click', () => switchToChannel(dmKey));
-          dmListEl.appendChild(li);
-        });
-      } else {
-        dmListEl.innerHTML = '<li style="color: var(--text-secondary); padding: 0.5rem;">Add friends to start chatting</li>';
-      }
-
-      const studyGroupList = document.getElementById('study-group-list');
-      if (studyGroupList) {
-        studyGroupList.innerHTML = '';
-        const studyGroups = ['Math Study Group', 'Science Study Group', 'History Study Group'];
-        studyGroups.forEach(group => {
-          const li = document.createElement('li');
-          li.className = 'channel-item';
-          li.innerHTML = `<i class="fas fa-users"></i> ${group}`;
-          li.addEventListener('click', () => showToast('Study group feature coming soon!', 'info'));
-          studyGroupList.appendChild(li);
-        });
-      }
-    }
-
-    function switchToChannel(ch) {
-      currentChannel = ch;
-      document.querySelectorAll('.channel-item, .class-item, .dm-item').forEach(el => el.classList.remove('active'));
-      const activeItem = [...document.querySelectorAll('.channel-item, .class-item, .dm-item')].find(el => el.dataset.channel === ch);
-      if (activeItem) activeItem.classList.add('active');
-      
-      // Join room via Socket.IO
-      socket.emit('join-room', { room: ch });
-      loadChannel(ch);
-    }
-
-    function loadChannel(channel) {
-      let displayName = channel;
-      if (channel.startsWith('dm:')) {
-        displayName = channel.substring(3);
-      }
-      document.getElementById('channel-name').innerText = displayName;
-
-      if (!messages[channel]) {
-        messages[channel] = [{ 
-          id: nextMessageId++,
-          sender: 'System', 
-          text: `Welcome to ${displayName}!`, 
-          timestamp: Date.now(),
-          reactions: []
-        }];
-      }
-      renderMessages(messages[channel]);
-
-      let online = [];
-      if (channel === 'Global Lounge') {
-        online = users.map(u => u.name);
-      } else if (channel === 'Friends Lounge') {
-        online = users.filter(u => u.friends?.includes(currentUser?.name)).map(u => u.name);
-      } else if (channel.endsWith(' Channel')) {
-        const grade = channel.split(' ')[0];
-        online = users.filter(u => u.grade === grade).map(u => u.name);
-      } else if (channel.startsWith('dm:')) {
-        const friendName = channel.substring(3);
-        online = [currentUser.name, friendName];
-      } else {
-        online = users.filter(u => u.classes.includes(channel)).map(u => u.name);
-      }
-      
-      renderOnlineUsers(online);
-    }
-
-    // renderMessages function with Zoom Meet styling
-    function renderMessages(msgs) {
-      messageFeed.innerHTML = '';
-      msgs.slice().reverse().forEach(msg => {
-        const div = document.createElement('div');
-        div.className = 'message' + (msg.sender === currentUser?.name ? ' own-message' : '') + (msg.isMeetLink ? ' meet-message' : '');
-        
-        const time = new Date(msg.timestamp).toLocaleTimeString([], { 
-          hour: '2-digit', 
-          minute: '2-digit' 
-        });
-
-        let content = '';
-        
-        // Handle Zoom Meet messages
-        if (msg.isMeetLink) {
-          if (msg.isScheduled) {
-            content = `<div>
-              <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px;">
-                <i class="fas fa-calendar" style="color: #ffc107; font-size: 1.5rem;"></i>
-                <strong style="font-size: 1.1rem;">Scheduled Zoom Meet</strong>
-              </div>
-              <p style="margin-bottom: 5px;">Time: <strong>${msg.scheduledTime}</strong></p>
-              <p style="margin-bottom: 5px;">Meeting Code:</p>
-              <div class="meet-code">${msg.meetCode}</div>
-              <a href="${msg.meetLink}" target="_blank" class="meet-link-btn">
-                <i class="fab fa-zoom"></i> Join Zoom Meet
-              </a>
-            </div>`;
-          } else {
-            content = `<div>
-              <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px;">
-                <i class="fas fa-video" style="color: var(--google-blue); font-size: 1.5rem;"></i>
-                <strong style="font-size: 1.1rem;">Zoom Meet Started!</strong>
-              </div>
-              <p style="margin-bottom: 5px;">Meeting Code:</p>
-              <div class="meet-code">${msg.meetCode}</div>
-              <a href="${msg.meetLink}" target="_blank" class="meet-link-btn">
-                <i class="fab fa-zoom"></i> Join Zoom Meet
-              </a>
-            </div>`;
-          }
-        } else {
-          content = msg.text;
-        }
-
-        let reactionsHtml = '';
-        if (msg.reactions && msg.reactions.length > 0) {
-          const reactionCounts = {};
-          msg.reactions.forEach(r => {
-            reactionCounts[r.emoji] = (reactionCounts[r.emoji] || 0) + 1;
-          });
-          
-          reactionsHtml = '<div class="reactions">';
-          for (let emoji in reactionCounts) {
-            reactionsHtml += `<span class="reaction-badge" onclick="addReaction(${msg.id}, '${emoji}')">${emoji} ${reactionCounts[emoji]}</span>`;
-          }
-          reactionsHtml += '</div>';
-        }
-
-        div.innerHTML = `
-          <div class="meta">
-            <span class="sender">${msg.sender}</span>
-            <span class="time">${time}</span>
-            ${msg.isMeetLink ? '<span style="background: var(--google-blue); color: white; padding: 2px 8px; border-radius: 12px; font-size: 0.7rem; margin-left: 5px; font-weight: bold;">MEET</span>' : ''}
-            ${msg.isScheduled ? '<span style="background: #ffc107; color: black; padding: 2px 8px; border-radius: 12px; font-size: 0.7rem; margin-left: 5px; font-weight: bold;">SCHEDULED</span>' : ''}
-          </div>
-          <div>${content}</div>
-          ${reactionsHtml}
-        `;
-
-        if (content.includes('<img') && !content.includes('onclick')) {
-          div.querySelector('img')?.addEventListener('click', (e) => {
-            const modal = document.getElementById('image-modal');
-            const modalImg = document.getElementById('modal-image');
-            modalImg.src = e.target.src;
-            modal.classList.add('active');
-          });
-        }
-
-        messageFeed.appendChild(div);
-      });
-    }
-
-    function renderOnlineUsers(usersList) {
-      onlineListEl.innerHTML = '';
-      usersList.forEach(name => {
-        const li = document.createElement('li');
-        const user = users.find(u => u.name === name);
-        
-        li.innerHTML = `
-          <span class="name">
-            <span class="online-dot">●</span>
-            <img src="${user?.avatar || 'https://i.pravatar.cc/150?img=' + Math.floor(Math.random() * 10)}" 
-                 style="width: 24px; height: 24px; border-radius: 50%; object-fit: cover;">
-            ${name}
-          </span>
-        `;
-
-        if (currentUser && name !== currentUser.name) {
-          const currentUserObj = users.find(u => u.email === currentUser.email);
-          if (!currentUserObj.friends.includes(name)) {
-            const addIcon = document.createElement('i');
-            addIcon.className = 'fas fa-user-plus add-friend';
-            addIcon.title = 'Add friend';
-            addIcon.onclick = (e) => {
-              e.stopPropagation();
-              addFriend(name);
-            };
-            li.appendChild(addIcon);
-          }
-        }
-        onlineListEl.appendChild(li);
-      });
-      onlineCount.innerText = usersList.length;
-    }
-
-    function addFriend(friendName) {
-      if (!currentUser) return;
-      
-      const current = users.find(u => u.email === currentUser.email);
-      const friend = users.find(u => u.name === friendName);
-      
-      if (!current || !friend) return;
-      if (current.friends.includes(friendName)) {
-        showToast('Already friends!', 'info');
-        return;
-      }
-
-      current.friends.push(friendName);
-      friend.friends.push(currentUser.name);
-      currentUser.friends = current.friends;
-      
-      buildChannelList();
-      showToast(`You are now friends with ${friendName}! 🎉`, 'success');
-    }
-
-    window.addReaction = function(messageId, emoji) {
-      if (!currentUser) return;
-      
-      const msg = messages[currentChannel].find(m => m.id === messageId);
-      if (msg) {
-        if (!msg.reactions) msg.reactions = [];
-        msg.reactions.push({
-          user: currentUser.name,
-          emoji: emoji,
-          timestamp: Date.now()
-        });
-        renderMessages(messages[currentChannel]);
-      }
-    };
-
-    // REAL SOCKET.IO SEND MESSAGE
-    window.sendMessage = function() {
-      if (!currentUser) {
-        showToast('Please log in to send messages', 'warning');
-        return;
-      }
-
-      const text = chatInput.value.trim();
-      if (!text) return;
-
-      // Send via Socket.IO to server
-      socket.emit('send-message', {
-        room: currentChannel,
-        user: currentUser.name,
-        text: text
-      });
-      
-      chatInput.value = '';
-      typingIndicator.innerText = '';
-    };
-
-    chatInput?.addEventListener('input', () => {
-      if (!currentUser) return;
-      typingIndicator.innerText = `${currentUser.name} is typing...`;
-      clearTimeout(typingTimer);
-      typingTimer = setTimeout(() => {
-        typingIndicator.innerText = '';
-      }, 1200);
-    });
-
-    chatInput?.addEventListener('keypress', (e) => {
-      if (e.key === 'Enter' && !e.shiftKey) {
-        e.preventDefault();
-        sendMessage();
-      }
-    });
-
-    document.getElementById('file-input')?.addEventListener('change', (e) => {
-      const files = Array.from(e.target.files);
-      if (files.length > 0 && currentUser) {
-        files.forEach(file => {
-          if (file.type.startsWith('image/')) {
-            const reader = new FileReader();
-            reader.onload = (e) => {
-              const msg = {
-                id: nextMessageId++,
-                sender: currentUser.name,
-                text: `<img src="${e.target.result}" style="max-width: 200px; border-radius: 8px; cursor: pointer;" onclick="showImageModal(this.src)">`,
-                timestamp: Date.now(),
-                reactions: []
-              };
-              messages[currentChannel].push(msg);
-              renderMessages(messages[currentChannel]);
-            };
-            reader.readAsDataURL(file);
-          } else {
-            const msg = {
-              id: nextMessageId++,
-              sender: currentUser.name,
-              text: `📎 Uploaded: ${file.name}`,
-              timestamp: Date.now(),
-              reactions: []
-            };
-            messages[currentChannel].push(msg);
-            renderMessages(messages[currentChannel]);
-          }
-        });
-        showToast(`${files.length} file(s) uploaded`, 'success');
-      }
-    });
-
-    window.showImageModal = function(src) {
-      const modal = document.getElementById('image-modal');
-      const modalImg = document.getElementById('modal-image');
-      modalImg.src = src;
-      modal.classList.add('active');
-    };
-
-    window.toggleEmojiPicker = function() {
-      const picker = document.getElementById('emoji-picker');
-      picker.classList.toggle('active');
-    };
-
-    window.handleSearch = function(query) {
-      if (!query || query.length < 2) {
-        searchResults.style.display = 'none';
-        return;
-      }
-
-      const results = [];
-      
-      for (let channel in messages) {
-        messages[channel].forEach(msg => {
-          if (msg.text.toLowerCase().includes(query.toLowerCase())) {
-            results.push({
-              type: 'message',
-              channel: channel,
-              content: msg.text.substring(0, 50) + '...',
-              sender: msg.sender,
-              time: new Date(msg.timestamp).toLocaleDateString()
-            });
-          }
-        });
-      }
-
-      users.forEach(user => {
-        if (user.name.toLowerCase().includes(query.toLowerCase())) {
-          results.push({
-            type: 'user',
-            name: user.name,
-            grade: user.grade
-          });
-        }
-      });
-
-      if (results.length > 0) {
-        searchResults.innerHTML = results.map(r => {
-          if (r.type === 'message') {
-            return `<div class="search-result-item" onclick="jumpToMessage('${r.channel}')">
-                      <i class="fas fa-comment"></i> ${r.content}
-                      <small>${r.sender} · ${r.time}</small>
-                    </div>`;
-          } else {
-            return `<div class="search-result-item" onclick="startDM('${r.name}')">
-                      <i class="fas fa-user"></i> ${r.name}
-                      <small>${r.grade}</small>
-                    </div>`;
-          }
-        }).join('');
-        searchResults.style.display = 'block';
-      } else {
-        searchResults.style.display = 'none';
-      }
-    };
-
-    // Pomodoro Timer
-    window.startPomodoro = function() {
-      if (pomodoroTimer.isRunning) return;
-      
-      pomodoroTimer.isRunning = true;
-      pomodoroTimer.interval = setInterval(() => {
-        if (pomodoroTimer.timeLeft > 0) {
-          pomodoroTimer.timeLeft--;
-          updatePomodoroDisplay();
-        } else {
-          if (pomodoroTimer.mode === 'work') {
-            pomodoroTimer.mode = 'break';
-            pomodoroTimer.timeLeft = pomodoroTimer.breakTime;
-            document.getElementById('pomodoro-phase').innerText = 'Break Time ☕';
-            showToast('Time for a break!', 'info');
-          } else {
-            pomodoroTimer.mode = 'work';
-            pomodoroTimer.timeLeft = pomodoroTimer.workTime;
-            document.getElementById('pomodoro-phase').innerText = 'Work Time 📚';
-            showToast('Break over! Back to work!', 'info');
-          }
-        }
-      }, 1000);
-    };
-
-    window.pausePomodoro = function() {
-      pomodoroTimer.isRunning = false;
-      clearInterval(pomodoroTimer.interval);
-    };
-
-    window.resetPomodoro = function() {
-      pausePomodoro();
-      pomodoroTimer.mode = 'work';
-      pomodoroTimer.timeLeft = pomodoroTimer.workTime;
-      document.getElementById('pomodoro-phase').innerText = 'Work Time 📚';
-      updatePomodoroDisplay();
-    };
-
-    function updatePomodoroDisplay() {
-      const minutes = Math.floor(pomodoroTimer.timeLeft / 60);
-      const seconds = pomodoroTimer.timeLeft % 60;
-      const timeString = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
-      
-      if (document.getElementById('pomodoro-display')) {
-        document.getElementById('pomodoro-display').innerText = timeString;
-      }
-      if (document.getElementById('pomodoro-display-home')) {
-        document.getElementById('pomodoro-display-home').innerText = timeString;
-      }
-    }
-
-    window.showPomodoroModal = function() {
-      document.getElementById('pomodoro-modal').classList.add('active');
-      updatePomodoroDisplay();
-    };
-
-    window.closePomodoroModal = function() {
-      document.getElementById('pomodoro-modal').classList.remove('active');
-    };
-
-    // Auth functions
-    window.showLoginForm = function() {
-      document.getElementById('login-form').style.display = 'block';
-      document.getElementById('register-form').style.display = 'none';
-      document.getElementById('forgot-form').style.display = 'none';
-    };
-
-    window.showRegisterForm = function() {
-      document.getElementById('login-form').style.display = 'none';
-      document.getElementById('register-form').style.display = 'block';
-      document.getElementById('forgot-form').style.display = 'none';
-    };
-
-    window.showForgotPassword = function() {
-      document.getElementById('login-form').style.display = 'none';
-      document.getElementById('register-form').style.display = 'none';
-      document.getElementById('forgot-form').style.display = 'block';
-    };
-
-    window.handleLogin = function() {
-      const email = document.getElementById('login-email').value.trim();
-      const pwd = document.getElementById('login-password').value.trim();
-      const remember = document.getElementById('remember-me').checked;
-
-      const user = users.find(u => u.email === email && u.password === pwd);
-      
-      if (user) {
-        currentUser = { 
-          name: user.name, 
-          email: user.email, 
-          grade: user.grade, 
-          classes: user.classes, 
-          friends: user.friends,
-          avatar: user.avatar
-        };
-        
-        if (remember) {
-          localStorage.setItem('bmc_user', JSON.stringify(currentUser));
-        } else {
-          sessionStorage.setItem('bmc_user', JSON.stringify(currentUser));
-        }
-        
-        document.getElementById('login-error').innerText = '';
-        showToast(`Welcome back, ${user.name}! 🎉`, 'success');
-        
-        // Tell server user joined
-        socket.emit('user-join', { name: currentUser.name });
-        
-        afterLogin();
-      } else {
-        document.getElementById('login-error').innerText = 'Invalid email or password';
-        showToast('Login failed', 'error');
-      }
-    };
-
-    window.handleRegister = function() {
-      const name = document.getElementById('reg-name').value.trim();
-      const email = document.getElementById('reg-email').value.trim();
-      const grade = document.getElementById('reg-grade').value;
-      const checkboxes = document.querySelectorAll('#course-checkboxes-container input[type="checkbox"]:checked');
-      const selectedClasses = Array.from(checkboxes).map(cb => cb.value);
-      const pwd = document.getElementById('reg-password').value.trim();
-      const confirmPwd = document.getElementById('reg-confirm-password').value.trim();
-
-      if (!name || !email || !pwd || selectedClasses.length === 0) {
-        document.getElementById('register-error').innerText = 'Please fill all fields and select at least one class';
-        return;
-      }
-
-      if (!email.endsWith('@bmcchs.org')) {
-        document.getElementById('register-error').innerText = 'Must use school email (@bmcchs.org)';
-        return;
-      }
-
-      if (pwd.length < 8) {
-        document.getElementById('register-error').innerText = 'Password must be at least 8 characters';
-        return;
-      }
-
-      if (pwd !== confirmPwd) {
-        document.getElementById('register-error').innerText = 'Passwords do not match';
-        return;
-      }
-
-      if (users.find(u => u.email === email)) {
-        document.getElementById('register-error').innerText = 'Email already exists';
-        return;
-      }
-
-      const newUser = { 
-        id: users.length + 1,
-        name, 
-        email, 
-        grade, 
-        classes: selectedClasses, 
-        password: pwd, 
-        friends: [],
-        avatar: `https://i.pravatar.cc/150?img=${users.length + 1}`,
-        status: 'online',
-        studyGroups: []
-      };
-      
-      users.push(newUser);
-      currentUser = { 
-        name, 
-        email, 
-        grade, 
-        classes: selectedClasses, 
-        friends: [],
-        avatar: newUser.avatar
-      };
-      
-      localStorage.setItem('bmc_user', JSON.stringify(currentUser));
-      document.getElementById('register-error').innerText = '';
-      showToast('Registration successful! 🎉', 'success');
-      
-      // Tell server user joined
-      socket.emit('user-join', { name: currentUser.name });
-      
-      afterLogin();
-    };
-
-    window.handleForgotPassword = function() {
-      const email = document.getElementById('forgot-email').value.trim();
-      const user = users.find(u => u.email === email);
-      
-      if (user) {
-        document.getElementById('forgot-success').innerText = 'Password reset link sent to your email!';
-        document.getElementById('forgot-error').innerText = '';
-        showToast('Reset link sent! Check your email', 'success');
-      } else {
-        document.getElementById('forgot-error').innerText = 'Email not found';
-        showToast('Email not found', 'error');
-      }
-    };
-
-    function afterLogin() {
-      userNameSpan.innerText = currentUser.name;
-      friendsToggleIcon.style.color = 'var(--text-secondary)';
-      
-      dashboardNav.style.display = 'inline-block';
-      resourcesNav.style.display = 'inline-block';
-      
-      buildChannelList();
-      loadChannel('Global Lounge');
-      showSection('dashboard');
-      
-      notifications.push({
-        user: 'System',
-        message: `Welcome to BMC Study Buddy, ${currentUser.name}!`,
-        timestamp: Date.now()
-      });
-      
-      // Join default channel
-      socket.emit('join-room', { room: 'Global Lounge' });
-    }
-
-    window.logout = function() {
-      currentUser = null;
-      friendsModeActive = false;
-      friendsToggleIcon.style.color = 'var(--text-secondary)';
-      
-      localStorage.removeItem('bmc_user');
-      sessionStorage.removeItem('bmc_user');
-      
-      dashboardNav.style.display = 'none';
-      resourcesNav.style.display = 'none';
-      
-      showSection('home');
-      showToast('Logged out successfully', 'info');
-    };
-
-    window.uploadResource = function() {
-      const title = document.getElementById('resource-title')?.value;
-      const type = document.getElementById('resource-type')?.value;
-      const file = document.getElementById('resource-file')?.files[0];
-
-      if (!title || !file) {
-        showToast('Please fill all fields', 'warning');
-        return;
-      }
-
-      showToast('Resource uploaded successfully!', 'success');
-      
-      document.getElementById('resource-title').value = '';
-      document.getElementById('resource-file').value = '';
-    };
-
-    window.showNotifications = function() {
-      if (notifications.length === 0) {
-        showToast('No new notifications', 'info');
-      } else {
-        notifications.forEach(notif => {
-          showToast(notif.message, 'info');
-        });
-      }
-    };
-
-    window.createChannel = function() {
-      const channelName = prompt('Enter channel name:');
-      if (channelName && currentUser) {
-        if (!messages[channelName]) {
-          messages[channelName] = [{
-            id: nextMessageId++,
-            sender: 'System',
-            text: `Welcome to ${channelName}!`,
-            timestamp: Date.now(),
-            reactions: []
-          }];
-          buildChannelList();
-          showToast(`Channel ${channelName} created`, 'success');
-        } else {
-          showToast('Channel already exists', 'warning');
-        }
-      }
-    };
-
-    window.createStudyGroup = function() {
-      showToast('Study group creation coming soon!', 'info');
-    };
-
-    window.startNewDM = function() {
-      const friendName = prompt('Enter friend\'s name:');
-      if (friendName) {
-        const friend = users.find(u => u.name === friendName);
-        if (friend) {
-          addFriend(friendName);
-        } else {
-          showToast('User not found', 'error');
-        }
-      }
-    };
-
-    window.startDM = function(friendName) {
-      addFriend(friendName);
-      switchToChannel(`dm:${friendName}`);
-      searchResults.style.display = 'none';
-      if (searchInput) searchInput.value = '';
-    };
-
-    window.jumpToMessage = function(channel) {
-      switchToChannel(channel);
-      searchResults.style.display = 'none';
-      if (searchInput) searchInput.value = '';
-    };
-
-    window.refreshClasses = function() {
-      buildChannelList();
-      showToast('Classes refreshed', 'success');
-    };
-
-    window.showChannelInfo = function() {
-      showToast(`Channel: ${currentChannel}`, 'info');
-    };
+    document.getElementById('login-screen').style.display = 'none';
+    document.getElementById('main-app').style.display = 'flex';
     
-    // Socket.IO event listeners for REAL CHAT
-    socket.on('connect', () => {
-      console.log('Connected to server');
-    });
+    renderChannels();
+    switchChannel('Global Lounge');
+    showToast(`Welcome back, ${user.name}! 🎉`, 'success');
+  } else {
+    showToast('Invalid password', 'error');
+  }
+}
+
+function renderChannels() {
+  const channelList = document.getElementById('channel-list');
+  channelList.innerHTML = '';
+  channels.forEach(channel => {
+    const li = document.createElement('li');
+    li.textContent = channel;
+    li.onclick = () => switchChannel(channel);
+    if (channel === currentChannel) li.classList.add('active');
+    channelList.appendChild(li);
+  });
+}
+
+function switchChannel(channel) {
+  currentChannel = channel;
+  document.getElementById('current-channel').textContent = channel;
+  document.querySelectorAll('.channel-list li').forEach(li => {
+    if (li.textContent === channel) li.classList.add('active');
+    else li.classList.remove('active');
+  });
+  socket.emit('join-room', { room: channel });
+  const messagesDiv = document.getElementById('messages');
+  messagesDiv.innerHTML = '';
+  if (messages[channel]) renderMessages(messages[channel]);
+}
+
+function sendMessage() {
+  const input = document.getElementById('message-input');
+  const text = input.value.trim();
+  if (!text) return;
+  
+  socket.emit('send-message', {
+    room: currentChannel,
+    user: currentUser.name,
+    text: text
+  });
+  input.value = '';
+}
+
+function renderMessages(msgs) {
+  const messagesDiv = document.getElementById('messages');
+  messagesDiv.innerHTML = '';
+  msgs.forEach(msg => {
+    const div = document.createElement('div');
+    const isOwn = msg.sender === currentUser.name;
+    const isSystem = msg.sender === 'System';
     
-    socket.on('receive-message', (data) => {
-      if (data.room === currentChannel) {
-        if (!messages[data.room]) messages[data.room] = [];
-        
-        const newMsg = {
-          id: nextMessageId++,
-          sender: data.user,
-          text: data.text,
-          timestamp: data.timestamp,
-          reactions: []
-        };
-        
-        messages[data.room].push(newMsg);
-        renderMessages(messages[data.room]);
-        
-        // Play sound if message is from someone else
-        if (data.user !== currentUser?.name) {
-          playNotificationSound();
-        }
-      } else {
-        if (!messages[data.room]) messages[data.room] = [];
-        messages[data.room].push({
-          id: nextMessageId++,
-          sender: data.user,
-          text: data.text,
-          timestamp: data.timestamp,
-          reactions: []
-        });
-      }
-    });
+    div.className = 'message';
+    if (isOwn) div.classList.add('own');
+    else if (isSystem) div.classList.add('system');
+    else div.classList.add('other');
     
-    socket.on('user-list', (userList) => {
-      renderOnlineUsers(userList);
+    const time = new Date(msg.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    
+    div.innerHTML = `
+      ${!isSystem ? `<div class="sender">${msg.sender}</div>` : ''}
+      <div>${msg.text}</div>
+      <div class="time">${time}</div>
+    `;
+    messagesDiv.appendChild(div);
+  });
+  messagesDiv.scrollTop = messagesDiv.scrollHeight;
+}
+
+function addMessage(user, text, timestamp, isOwn = false, isSystem = false) {
+  if (!messages[currentChannel]) messages[currentChannel] = [];
+  messages[currentChannel].push({
+    id: nextMessageId++,
+    sender: user,
+    text: text,
+    timestamp: timestamp
+  });
+  renderMessages(messages[currentChannel]);
+}
+
+function renderOnlineUsers(userList) {
+  const onlineList = document.getElementById('online-list');
+  document.getElementById('online-count').textContent = userList.length;
+  onlineList.innerHTML = '';
+  userList.forEach(user => {
+    const li = document.createElement('li');
+    li.innerHTML = `<span class="online-dot"></span> ${user}`;
+    onlineList.appendChild(li);
+  });
+}
+
+function createZoomMeet() {
+  const meetCode = prompt('Enter Zoom Meet code:', 'abc-defg-hij');
+  if (meetCode) {
+    const meetLink = `https://zoom.us/j/${meetCode}`;
+    socket.emit('send-message', {
+      room: currentChannel,
+      user: currentUser.name,
+      text: `🎥 Zoom Meet: ${meetCode} - Join at ${meetLink}`
     });
+    window.open(meetLink, '_blank');
+    showToast('Zoom Meet shared!', 'success');
+  }
+}
 
-    const savedUser = localStorage.getItem('bmc_user') || sessionStorage.getItem('bmc_user');
-    if (savedUser) {
-      try {
-        currentUser = JSON.parse(savedUser);
-        const exists = users.find(u => u.email === currentUser.email);
-        if (exists) {
-          afterLogin();
-        } else {
-          localStorage.removeItem('bmc_user');
-          sessionStorage.removeItem('bmc_user');
-        }
-      } catch (e) {
-        console.error('Error loading saved user:', e);
-      }
-    }
+function logout() { window.location.reload(); }
 
-    initEmojiPicker();
-
-    window.onclick = function(event) {
-      if (event.target.classList.contains('modal')) {
-        event.target.classList.remove('active');
-      }
-    };
-
-    document.addEventListener('keydown', (e) => {
-      if (e.ctrlKey && e.key === 'k') {
-        e.preventDefault();
-        document.getElementById('global-search')?.focus();
-      }
-      if (e.ctrlKey && e.key === 'm') {
-        e.preventDefault();
-        toggleFriendsMode();
-      }
-      if (e.ctrlKey && e.key === 'p') {
-        e.preventDefault();
-        showPomodoroModal();
-      }
-      if (e.key === 'Escape') {
-        document.querySelectorAll('.modal.active').forEach(modal => {
-          modal.classList.remove('active');
-        });
-        document.getElementById('emoji-picker')?.classList.remove('active');
-        document.getElementById('search-results').style.display = 'none';
-      }
+// Socket events
+socket.on('connect', () => console.log('Connected'));
+socket.on('receive-message', (data) => {
+  if (data.room === currentChannel) {
+    addMessage(data.user, data.text, data.timestamp, data.user === currentUser.name);
+  } else {
+    if (!messages[data.room]) messages[data.room] = [];
+    messages[data.room].push({
+      id: nextMessageId++,
+      sender: data.user,
+      text: data.text,
+      timestamp: data.timestamp
     });
+  }
+});
+socket.on('user-list', renderOnlineUsers);
 
-    document.addEventListener('click', (e) => {
-      if (!e.target.closest('.search-bar')) {
-        document.getElementById('search-results').style.display = 'none';
-      }
-    });
+// Enter key to send
+document.getElementById('message-input')?.addEventListener('keypress', (e) => {
+  if (e.key === 'Enter') sendMessage();
+});
 
-    console.log('BMC Study Buddy with REAL Socket.IO Chat!');
-  })();
+console.log('BMC Study Buddy - Clean Version');
 </script>
 </body>
 </html>
+EOF
