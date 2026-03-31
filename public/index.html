@@ -1,3 +1,4 @@
+cd /Users/landonduvall/bmc-study-buddy
 cat > public/index.html << 'EOF'
 <!DOCTYPE html>
 <html lang="en">
@@ -80,9 +81,6 @@ cat > public/index.html << 'EOF'
       background: var(--primary-green);
       border-radius: 4px;
     }
-    ::-webkit-scrollbar-thumb:hover {
-      background: var(--hover-green);
-    }
 
     .navbar {
       background-color: var(--bg-secondary);
@@ -96,8 +94,6 @@ cat > public/index.html << 'EOF'
       position: sticky;
       top: 0;
       z-index: 1000;
-      backdrop-filter: blur(10px);
-      -webkit-backdrop-filter: blur(10px);
     }
 
     .logo {
@@ -184,10 +180,10 @@ cat > public/index.html << 'EOF'
       box-shadow: var(--shadow);
       transition: all 0.3s;
       border: 1px solid var(--border-color);
+      text-align: center;
     }
     .card:hover {
       transform: translateY(-4px);
-      box-shadow: 0 12px 24px rgba(0,0,0,0.4);
     }
     .card i {
       font-size: 2.5rem;
@@ -206,7 +202,6 @@ cat > public/index.html << 'EOF'
       cursor: pointer;
       transition: all 0.2s;
       display: inline-block;
-      border: 2px solid transparent;
     }
     .btn-outline {
       background: transparent;
@@ -225,17 +220,10 @@ cat > public/index.html << 'EOF'
       padding: 0.8rem 2rem;
       border-radius: 40px;
       font-weight: 600;
-      font-size: 1rem;
       cursor: pointer;
-      transition: all 0.2s;
       display: inline-flex;
       align-items: center;
       gap: 0.5rem;
-      border: 2px solid transparent;
-    }
-    .zoom-meet-btn:hover {
-      background: #3367d6;
-      transform: scale(1.02);
     }
 
     .auth-card {
@@ -245,7 +233,6 @@ cat > public/index.html << 'EOF'
       padding: 2.5rem;
       border-radius: 28px;
       border: 1px solid var(--border-color);
-      box-shadow: var(--shadow);
     }
 
     .form-group {
@@ -255,24 +242,52 @@ cat > public/index.html << 'EOF'
       display: block;
       margin-bottom: 0.4rem;
       color: var(--text-secondary);
-      font-weight: 500;
     }
-    .form-group input, .form-group select, .form-group textarea {
+    .form-group input, .form-group select {
       width: 100%;
       background: var(--bg-secondary);
       border: 1px solid var(--border-color);
       padding: 0.9rem 1rem;
       border-radius: 14px;
       color: var(--text-primary);
-      font-size: 1rem;
-      transition: border-color 0.2s;
-    }
-    .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
-      outline: none;
-      border-color: var(--accent-green);
     }
 
-    /* Dashboard Layout */
+    .course-checkboxes {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-color);
+      border-radius: 14px;
+      padding: 1rem;
+      max-height: 300px;
+      overflow-y: auto;
+    }
+    .category-group {
+      margin-bottom: 1rem;
+    }
+    .category-title {
+      color: var(--accent-green);
+      font-weight: 600;
+      margin-bottom: 0.3rem;
+    }
+    .checkbox-item {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.3rem 0.5rem;
+    }
+    .checkbox-item input {
+      width: auto;
+    }
+
+    .toggle-link {
+      text-align: center;
+      margin-top: 1.2rem;
+      color: var(--text-secondary);
+      cursor: pointer;
+    }
+    .toggle-link:hover {
+      color: var(--accent-green);
+    }
+
     .dashboard-panels {
       display: flex;
       gap: 1.5rem;
@@ -297,7 +312,6 @@ cat > public/index.html << 'EOF'
       color: var(--text-secondary);
       font-size: 0.9rem;
       text-transform: uppercase;
-      letter-spacing: 0.5px;
       margin-bottom: 0.5rem;
       padding-left: 0.5rem;
       display: flex;
@@ -307,7 +321,6 @@ cat > public/index.html << 'EOF'
     .sidebar-heading i {
       color: var(--accent-green);
       cursor: pointer;
-      font-size: 1rem;
     }
 
     .channel-list, .class-list {
@@ -323,7 +336,6 @@ cat > public/index.html << 'EOF'
       display: flex;
       align-items: center;
       gap: 0.6rem;
-      position: relative;
     }
     .channel-item i, .class-item i {
       width: 1.5rem;
@@ -337,9 +349,6 @@ cat > public/index.html << 'EOF'
       background: var(--primary-green);
       color: white;
     }
-    .channel-item.active i, .class-item.active i {
-      color: white;
-    }
 
     .center-panel {
       flex: 1;
@@ -349,7 +358,6 @@ cat > public/index.html << 'EOF'
       flex-direction: column;
       overflow: hidden;
       border: 1px solid var(--border-color);
-      position: relative;
     }
 
     .chat-header {
@@ -368,10 +376,6 @@ cat > public/index.html << 'EOF'
     }
     .chat-header-actions i {
       cursor: pointer;
-      transition: transform 0.2s;
-    }
-    .chat-header-actions i:hover {
-      transform: scale(1.1);
     }
 
     .message-feed {
@@ -389,8 +393,6 @@ cat > public/index.html << 'EOF'
       border-radius: 18px;
       max-width: 80%;
       align-self: flex-start;
-      animation: slideIn 0.2s ease;
-      position: relative;
     }
     .message.own-message {
       background: var(--primary-green);
@@ -400,17 +402,11 @@ cat > public/index.html << 'EOF'
     .message.meet-message {
       background: rgba(66, 133, 244, 0.1);
       border-left: 4px solid var(--google-blue);
-      max-width: 90%;
-    }
-    @keyframes slideIn {
-      from { opacity: 0; transform: translateX(-10px); }
-      to { opacity: 1; transform: translateX(0); }
     }
 
     .message .meta {
       display: flex;
       gap: 0.8rem;
-      align-items: baseline;
       margin-bottom: 0.3rem;
     }
     .message .sender {
@@ -421,8 +417,31 @@ cat > public/index.html << 'EOF'
       font-size: 0.7rem;
       color: var(--text-muted);
     }
-    .message.own-message .time {
-      color: rgba(255,255,255,0.7);
+
+    .meet-code {
+      background: var(--bg-primary);
+      padding: 0.5rem 1rem;
+      border-radius: 12px;
+      font-family: monospace;
+      font-size: 1.2rem;
+      display: inline-block;
+      margin: 0.5rem 0;
+      border: 1px solid var(--google-blue);
+      color: var(--google-blue);
+    }
+
+    .meet-link-btn {
+      background: var(--google-blue);
+      color: white;
+      border: none;
+      padding: 0.8rem 1.5rem;
+      border-radius: 40px;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.8rem;
+      text-decoration: none;
     }
 
     .typing-indicator {
@@ -430,7 +449,6 @@ cat > public/index.html << 'EOF'
       color: var(--text-secondary);
       font-style: italic;
       min-height: 2rem;
-      font-size: 0.9rem;
     }
 
     .chat-input-area {
@@ -448,11 +466,6 @@ cat > public/index.html << 'EOF'
       padding: 0.9rem 1.2rem;
       border-radius: 40px;
       color: var(--text-primary);
-      font-size: 1rem;
-    }
-    .chat-input-area input:focus {
-      outline: none;
-      border-color: var(--accent-green);
     }
     .chat-input-area button {
       background: var(--primary-green);
@@ -461,16 +474,7 @@ cat > public/index.html << 'EOF'
       height: 48px;
       border-radius: 50%;
       color: white;
-      font-size: 1.2rem;
       cursor: pointer;
-      transition: all 0.2s;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-    .chat-input-area button:hover {
-      background: var(--hover-green);
-      transform: scale(1.05);
     }
 
     .right-sidebar {
@@ -487,40 +491,31 @@ cat > public/index.html << 'EOF'
       margin-top: 1rem;
     }
     .online-list li {
-      padding: 0.4rem 0;
+      padding: 0.5rem;
       display: flex;
       align-items: center;
-      justify-content: space-between;
       gap: 0.5rem;
-      transition: background 0.2s;
-      padding: 0.5rem;
       border-radius: 8px;
     }
     .online-list li:hover {
       background: var(--bg-hover);
-    }
-    .online-list li .name {
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
     }
     .online-dot {
       color: var(--success);
       font-size: 0.8rem;
     }
 
-    /* Study Timer */
-    .study-timer {
+    .pomodoro-timer {
       background: var(--bg-card);
       border-radius: 24px;
       padding: 2rem;
       margin: 2rem 0;
+      text-align: center;
       border: 1px solid var(--border-color);
     }
     .timer-display {
       font-size: 4rem;
       font-weight: 700;
-      text-align: center;
       color: var(--accent-green);
       margin: 1rem 0;
     }
@@ -531,7 +526,6 @@ cat > public/index.html << 'EOF'
       flex-wrap: wrap;
     }
 
-    /* Modal */
     .modal {
       display: none;
       position: fixed;
@@ -553,22 +547,6 @@ cat > public/index.html << 'EOF'
       border-radius: 28px;
       max-width: 500px;
       width: 90%;
-      max-height: 80vh;
-      overflow-y: auto;
-    }
-    .modal-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 1rem;
-    }
-    .close-modal {
-      font-size: 1.5rem;
-      cursor: pointer;
-      color: var(--text-muted);
-    }
-    .close-modal:hover {
-      color: var(--danger);
     }
 
     .toast-container {
@@ -579,29 +557,15 @@ cat > public/index.html << 'EOF'
     }
     .toast {
       background: var(--bg-card);
-      color: var(--text-primary);
       padding: 1rem 1.5rem;
       border-radius: 14px;
       margin-top: 0.5rem;
       border-left: 4px solid var(--accent-green);
-      box-shadow: var(--shadow);
       animation: slideInRight 0.3s ease;
-      display: flex;
-      align-items: center;
-      gap: 1rem;
     }
     @keyframes slideInRight {
       from { transform: translateX(100%); opacity: 0; }
       to { transform: translateX(0); opacity: 1; }
-    }
-
-    .footer {
-      background: var(--bg-secondary);
-      padding: 2rem;
-      text-align: center;
-      color: var(--text-secondary);
-      border-top: 1px solid var(--border-color);
-      margin-top: 3rem;
     }
 
     @media (max-width: 1024px) {
@@ -609,17 +573,10 @@ cat > public/index.html << 'EOF'
       .left-sidebar, .right-sidebar { flex: auto; width: 100%; }
     }
     @media (max-width: 768px) {
-      .navbar { flex-direction: column; padding: 1rem; }
-      .nav-links { justify-content: center; gap: 1rem; }
+      .navbar { flex-direction: column; }
+      .nav-links { justify-content: center; }
       .message { max-width: 95%; }
-      .chat-input-area { flex-wrap: wrap; }
-      .chat-input-area button { width: 44px; height: 44px; }
       .timer-display { font-size: 3rem; }
-    }
-    @media (max-width: 480px) {
-      .container { padding: 0 1rem; }
-      .auth-card { padding: 1.5rem; }
-      .card-grid { grid-template-columns: 1fr; }
     }
   </style>
 </head>
@@ -647,11 +604,9 @@ cat > public/index.html << 'EOF'
 <div class="container">
   <!-- HOME SECTION -->
   <div id="home-section" class="section active-section">
-    <div class="hero" style="text-align: center; margin-bottom: 3rem;">
+    <div style="text-align: center; margin-bottom: 3rem;">
       <h1 style="font-size: 3.5rem; margin-bottom: 1rem;">Welcome to <span style="color: var(--accent-green);">BMC Study Buddy</span></h1>
-      <p style="color: var(--text-secondary); font-size: 1.2rem; max-width: 600px; margin: 0 auto;">
-        Your all-in-one study companion with Zoom integration!
-      </p>
+      <p style="color: var(--text-secondary); font-size: 1.2rem;">Your all-in-one study companion with Zoom integration!</p>
     </div>
     <div class="card-grid">
       <div class="card">
@@ -672,13 +627,13 @@ cat > public/index.html << 'EOF'
     </div>
 
     <!-- Study Timer Preview -->
-    <div class="study-timer" style="margin-top: 2rem;">
-      <h2 style="text-align: center; margin-bottom: 1rem;">📚 Study Timer</h2>
+    <div class="pomodoro-timer">
+      <h2>📚 Study Timer</h2>
       <div class="timer-display" id="study-display-home">25:00</div>
       <div class="timer-controls">
-        <button class="btn" onclick="startstudy()"><i class="fas fa-play"></i> Start</button>
-        <button class="btn btn-outline" onclick="pausestudy()"><i class="fas fa-pause"></i> Pause</button>
-        <button class="btn btn-outline" onclick="resetstudy()"><i class="fas fa-redo"></i> Reset</button>
+        <button class="btn" onclick="startStudyTimer()"><i class="fas fa-play"></i> Start</button>
+        <button class="btn btn-outline" onclick="pauseStudyTimer()"><i class="fas fa-pause"></i> Pause</button>
+        <button class="btn btn-outline" onclick="resetStudyTimer()"><i class="fas fa-redo"></i> Reset</button>
       </div>
     </div>
   </div>
@@ -708,29 +663,25 @@ cat > public/index.html << 'EOF'
   <!-- HOW IT WORKS SECTION -->
   <div id="how-section" class="section">
     <h1 style="font-size: 3rem; text-align: center; margin-bottom: 2rem;">How It Works</h1>
-    <div class="steps-container" style="display: flex; flex-wrap: wrap; gap: 2rem; justify-content: center;">
+    <div style="display: flex; flex-wrap: wrap; gap: 2rem; justify-content: center;">
       <div class="card" style="flex: 1 1 200px; text-align: center;">
-        <div class="step-number" style="background: var(--accent-green); width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 1rem; color: white; font-weight: bold;">1</div>
         <i class="fas fa-user-plus"></i>
-        <h3>Create Account</h3>
+        <h3>1. Create Account</h3>
         <p>Sign up with your school email</p>
       </div>
       <div class="card" style="flex: 1 1 200px; text-align: center;">
-        <div class="step-number" style="background: var(--accent-green); width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 1rem; color: white; font-weight: bold;">2</div>
         <i class="fas fa-book-open"></i>
-        <h3>Select Classes</h3>
+        <h3>2. Select Classes</h3>
         <p>Choose your current courses</p>
       </div>
       <div class="card" style="flex: 1 1 200px; text-align: center;">
-        <div class="step-number" style="background: var(--accent-green); width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 1rem; color: white; font-weight: bold;">3</div>
         <i class="fas fa-comments"></i>
-        <h3>Join Channels</h3>
+        <h3>3. Join Channels</h3>
         <p>Participate in discussions</p>
       </div>
       <div class="card" style="flex: 1 1 200px; text-align: center;">
-        <div class="step-number" style="background: var(--accent-green); width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 1rem; color: white; font-weight: bold;">4</div>
         <i class="fab fa-zoom" style="color: var(--google-blue);"></i>
-        <h3>Zoom</h3>
+        <h3>4. Zoom</h3>
         <p>Create and share meeting links</p>
       </div>
     </div>
@@ -739,7 +690,7 @@ cat > public/index.html << 'EOF'
   <!-- JOIN / LOGIN SECTION -->
   <div id="join-section" class="section">
     <div class="auth-card">
-      <h2 style="margin-bottom: 1.5rem; text-align: center;">Welcome to BMC Study Buddy</h2>
+      <h2 style="text-align: center; margin-bottom: 1.5rem;">Welcome to BMC Study Buddy</h2>
 
       <!-- Login Form -->
       <div id="login-form">
@@ -752,19 +703,15 @@ cat > public/index.html << 'EOF'
           <input type="password" id="login-password" placeholder="••••••••">
         </div>
         <div class="form-group">
-          <label style="display: flex; align-items: center; gap: 0.5rem;">
+          <label>
             <input type="checkbox" id="remember-me"> Remember me
           </label>
         </div>
         <button class="btn" style="width:100%;" onclick="handleLogin()">
           <i class="fas fa-sign-in-alt"></i> Log In
         </button>
-        <div class="toggle-link" onclick="showRegisterForm()">
-          Don't have an account? Register
-        </div>
-        <div class="toggle-link" onclick="showForgotPassword()">
-          Forgot password?
-        </div>
+        <div class="toggle-link" onclick="showRegisterForm()">Don't have an account? Register</div>
+        <div class="toggle-link" onclick="showForgotPassword()">Forgot password?</div>
         <div id="login-error" class="error-msg"></div>
       </div>
 
@@ -794,7 +741,7 @@ cat > public/index.html << 'EOF'
         <div class="form-group">
           <label><i class="fas fa-lock"></i> Password</label>
           <input type="password" id="reg-password" placeholder="••••••••">
-          <small style="color: var(--text-muted);">Minimum 8 characters</small>
+          <small>Minimum 8 characters</small>
         </div>
         <div class="form-group">
           <label><i class="fas fa-lock"></i> Confirm Password</label>
@@ -803,9 +750,7 @@ cat > public/index.html << 'EOF'
         <button class="btn" style="width:100%;" onclick="handleRegister()">
           <i class="fas fa-user-plus"></i> Register
         </button>
-        <div class="toggle-link" onclick="showLoginForm()">
-          Back to login
-        </div>
+        <div class="toggle-link" onclick="showLoginForm()">Back to login</div>
         <div id="register-error" class="error-msg"></div>
       </div>
 
@@ -818,9 +763,7 @@ cat > public/index.html << 'EOF'
         <button class="btn" style="width:100%;" onclick="handleForgotPassword()">
           <i class="fas fa-paper-plane"></i> Send Reset Link
         </button>
-        <div class="toggle-link" onclick="showLoginForm()">
-          Back to login
-        </div>
+        <div class="toggle-link" onclick="showLoginForm()">Back to login</div>
         <div id="forgot-error" class="error-msg"></div>
         <div id="forgot-success" class="success-msg"></div>
       </div>
@@ -829,14 +772,14 @@ cat > public/index.html << 'EOF'
 
   <!-- DASHBOARD SECTION -->
   <div id="dashboard-section" class="section">
-    <div class="dashboard-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; flex-wrap: wrap; gap: 1rem;">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; flex-wrap: wrap;">
       <div>
         <h2><i class="fas fa-tachometer-alt" style="color: var(--accent-green);"></i> Study Dashboard</h2>
         <p>Welcome back, <span id="current-user-name" style="color: var(--accent-green); font-weight: 600;"></span>!</p>
       </div>
       <div style="display: flex; gap: 1rem;">
-        <button class="btn btn-outline" onclick="showstudyModal()">
-          <i class="fas fa-clock"></i> study
+        <button class="btn btn-outline" onclick="showStudyTimerModal()">
+          <i class="fas fa-clock"></i> Study Timer
         </button>
         <button class="btn btn-outline" onclick="logout()">
           <i class="fas fa-sign-out-alt"></i> Logout
@@ -868,10 +811,10 @@ cat > public/index.html << 'EOF'
 
       <!-- Center Chat Panel -->
       <div class="center-panel">
-        <div class="chat-header" id="current-channel-header">
+        <div class="chat-header">
           <span><i class="fas fa-hashtag"></i> <span id="channel-name">Global Lounge</span></span>
           <div class="chat-header-actions">
-            <i class="fab fa-zoom" onclick="createZoomMeet()" title="Create Zoom Meet" style="color: white;"></i>
+            <i class="fab fa-zoom" onclick="createZoomMeet()" title="Create Zoom Meet"></i>
             <i class="fas fa-calendar-plus" onclick="scheduleCall()" title="Schedule a call"></i>
             <i class="fas fa-info-circle" onclick="showChannelInfo()" title="Channel info"></i>
           </div>
@@ -882,11 +825,11 @@ cat > public/index.html << 'EOF'
 
         <div class="chat-input-area">
           <button id="emoji-btn" onclick="toggleEmojiPicker()"><i class="fas fa-smile"></i></button>
-          <input type="text" id="chat-input" placeholder="Type a message..." autocomplete="off">
+          <input type="text" id="chat-input" placeholder="Type a message...">
           <button id="upload-btn" onclick="document.getElementById('file-input').click()">
             <i class="fas fa-paperclip"></i>
           </button>
-          <button id="zoom-meet-btn" onclick="createZoomMeet()" title="Create Zoom Meet">
+          <button id="zoom-meet-btn" onclick="createZoomMeet()">
             <i class="fab fa-zoom"></i>
           </button>
           <button id="send-btn" onclick="sendMessage()">
@@ -895,13 +838,12 @@ cat > public/index.html << 'EOF'
           <input type="file" id="file-input" style="display:none;" accept="image/*, .pdf, .doc, .docx" multiple>
         </div>
 
-        <!-- Emoji Picker -->
         <div id="emoji-picker" class="emoji-picker"></div>
       </div>
 
       <!-- Right Sidebar - Online Users -->
       <div class="right-sidebar">
-        <h3><i class="fas fa-circle" style="color: var(--success); font-size: 0.8rem;"></i> Online — <span id="online-count">0</span></h3>
+        <h3><i class="fas fa-circle" style="color: var(--success);"></i> Online — <span id="online-count">0</span></h3>
         <ul class="online-list" id="online-list"></ul>
 
         <!-- Zoom Quick Access -->
@@ -910,31 +852,28 @@ cat > public/index.html << 'EOF'
           <button class="zoom-meet-btn" style="width:100%; margin-top:1rem;" onclick="createZoomMeet()">
             <i class="fas fa-video"></i> New Zoom Meet
           </button>
-          <p style="font-size:0.8rem; color:var(--text-secondary); margin-top:0.5rem;">
-            Click to open Zoom Meet. Share the meeting code with others.
-          </p>
         </div>
       </div>
     </div>
   </div>
 </div>
 
-<!-- study Modal -->
+<!-- Study Timer Modal -->
 <div id="study-modal" class="modal">
   <div class="modal-content">
     <div class="modal-header">
       <h2><i class="fas fa-clock"></i> Study Timer</h2>
-      <span class="close-modal" onclick="closestudyModal()">&times;</span>
+      <span class="close-modal" onclick="closeStudyTimerModal()">&times;</span>
     </div>
-    <div class="study-timer">
+    <div class="pomodoro-timer">
       <div class="timer-display" id="study-display">25:00</div>
       <div style="text-align: center; margin: 1rem 0;">
         <span id="study-phase" style="color: var(--accent-green);">Work Time</span>
       </div>
       <div class="timer-controls">
-        <button class="btn" onclick="startstudy()"><i class="fas fa-play"></i> Start</button>
-        <button class="btn btn-outline" onclick="pausestudy()"><i class="fas fa-pause"></i> Pause</button>
-        <button class="btn btn-outline" onclick="resetstudy()"><i class="fas fa-redo"></i> Reset</button>
+        <button class="btn" onclick="startStudyTimer()"><i class="fas fa-play"></i> Start</button>
+        <button class="btn btn-outline" onclick="pauseStudyTimer()"><i class="fas fa-pause"></i> Pause</button>
+        <button class="btn btn-outline" onclick="resetStudyTimer()"><i class="fas fa-redo"></i> Reset</button>
       </div>
       <div style="margin-top: 1rem;">
         <label><input type="radio" name="study-mode" value="25" checked> 25 min</label>
@@ -952,20 +891,6 @@ cat > public/index.html << 'EOF'
 
 <!-- Toast Notifications -->
 <div id="toast-container" class="toast-container"></div>
-
-<!-- Footer -->
-<div class="footer">
-  <div class="logo" style="font-size: 1.8rem; margin-bottom: 1rem;" onclick="showSection('home')">
-    <i class="fas fa-graduation-cap"></i> BMC Study Buddy
-  </div>
-  <p>BMC Study Buddy</p>
-  <p>© 2026 · Zoom Integration</p>
-  <div style="margin-top: 1rem;">
-    <a href="#" style="color: var(--text-secondary); margin: 0 0.5rem;">Privacy</a>
-    <a href="#" style="color: var(--text-secondary); margin: 0 0.5rem;">Terms</a>
-    <a href="#" style="color: var(--text-secondary); margin: 0 0.5rem;">Contact</a>
-  </div>
-</div>
 
 <script src="https://cdn.jsdelivr.net/npm/emoji-mart@latest/dist/emoji-mart.js"></script>
 <script>
@@ -988,45 +913,30 @@ cat > public/index.html << 'EOF'
     // ---------- GLOBAL STATE ----------
     let currentUser = null;
     let currentChannel = 'Global Lounge';
-    let friendsModeActive = false;
     let notifications = [];
-    let messageReactions = {};
     let typingTimer;
     let nextMessageId = 100;
-    let pendingFriendRequests = [];
 
-let studyTimer = {
-  timeLeft: 25 * 60,
-  isRunning: false,
-  mode: 'work',
-  interval: null,
-  workTime: 25 * 60,
-  breakTime: 5 * 60
-};// Listen to radio buttons to change work duration
-const radioButtons = document.querySelectorAll('input[name="study-mode"]');
-radioButtons.forEach(radio => {
-  radio.addEventListener('change', (e) => {
-    if (e.target.checked) {
-      const minutes = parseInt(e.target.value);
-      studyTimer.workTime = minutes * 60;
-      if (!studyTimer.isRunning) {
-        studyTimer.timeLeft = studyTimer.workTime;
-        updateStudyDisplay();
-      }
-    }
-  });
-});
+    let studyTimer = {
+      timeLeft: 25 * 60,
+      isRunning: false,
+      mode: 'work',
+      interval: null,
+      workTime: 25 * 60,
+      breakTime: 5 * 60
+    };
+
     const users = [
-      { id: 1, name: 'Landon Duvall', email: 'student_duvala82@bmcchs.org', grade: '11th Grade', classes: ['Honors: Algebra 2', 'Honors: Biology 1'], password: 'bmcstudybuddy', friends: [], avatar: 'https://codehs.com/uploads/6d229f3dd4f00f97da18b41ab82003e9', status: 'online', studyGroups: [] },
-      { id: 2, name: 'Zach Burgdorf', email: 'student_burgza45@bmcchs.org', grade: '11th Grade', classes: ['College Prep: English 1', 'College Prep: Biology 1 Advanced'], password: 'bmcstudy buddy', friends: [], avatar: 'https://codehs.com/uploads/9a479d7f74e17c5c22bdf2c742db83e1', status: 'online', studyGroups: [] },
-      { id: 3, name: 'Jaxon Maddox', email: 'jaxonmad66@bmcchs.org', grade: '9th Grade', classes: ['Honors: English 3', 'Dual Enrollment: MAT 140'], password: 'bmcstudybuddy', friends: [], avatar: 'https://codehs.com/uploads/479f3258c745682680edfaf33457102f', status: 'online', studyGroups: [] }
+      { id: 1, name: 'Landon Duvall', email: 'student_duvala82@bmcchs.org', grade: '11th Grade', classes: ['Honors: Algebra 2', 'Honors: Biology 1'], password: 'bmcstudybuddy', friends: [], avatar: 'https://codehs.com/uploads/6d229f3dd4f00f97da18b41ab82003e9', status: 'online' },
+      { id: 2, name: 'Zach Burgdorf', email: 'student_burgza45@bmcchs.org', grade: '11th Grade', classes: ['College Prep: English 1', 'College Prep: Biology 1 Advanced'], password: 'bmcstudy buddy', friends: [], avatar: 'https://codehs.com/uploads/9a479d7f74e17c5c22bdf2c742db83e1', status: 'online' },
+      { id: 3, name: 'Jaxon Maddox', email: 'jaxonmad66@bmcchs.org', grade: '9th Grade', classes: ['Honors: English 3', 'Dual Enrollment: MAT 140'], password: 'bmcstudybuddy', friends: [], avatar: 'https://codehs.com/uploads/479f3258c745682680edfaf33457102f', status: 'online' }
     ];
 
     const messages = {
-      'Global Lounge': [ { id: 1, sender: 'System', text: 'Welcome to Global Lounge! 👋', timestamp: Date.now(), reactions: [] } ],
-      'Friends Lounge': [ { id: 2, sender: 'System', text: 'Welcome to Friends Lounge! Meet people from all grades.', timestamp: Date.now(), reactions: [] } ]
+      'Global Lounge': [{ id: 1, sender: 'System', text: 'Welcome to Global Lounge! 👋', timestamp: Date.now(), reactions: [] }]
     };
 
+    // DOM Elements
     const sections = document.querySelectorAll('.section');
     const navLinks = document.querySelectorAll('.nav-links a');
     const dashboardNav = document.getElementById('dashboard-nav-link');
@@ -1039,12 +949,8 @@ radioButtons.forEach(radio => {
     const channelListEl = document.getElementById('channel-list');
     const classListEl = document.getElementById('class-list');
     const courseContainer = document.getElementById('course-checkboxes-container');
-    const friendsToggleIcon = document.getElementById('friends-toggle');
     const toastContainer = document.getElementById('toast-container');
-    const searchInput = document.getElementById('global-search');
-    const searchResults = document.getElementById('search-results');
 
-    // Initialize Emoji Picker
     function initEmojiPicker() {
       if (window.EmojiMart) {
         const picker = new EmojiMart.Picker({
@@ -1106,19 +1012,12 @@ radioButtons.forEach(radio => {
       pickerContainer.innerHTML = '';
       initEmojiPicker();
     };
+
     const savedTheme = localStorage.getItem('theme');
     if (savedTheme === 'light') {
       document.body.classList.add('light-theme');
       document.getElementById('theme-toggle').classList.replace('fa-sun', 'fa-moon');
     }
-
-    window.toggleFriendsMode = function() {
-      if (!currentUser) { showToast('Please log in first', 'warning'); return; }
-      friendsModeActive = !friendsModeActive;
-      friendsToggleIcon.style.color = friendsModeActive ? '#ff69b4' : 'var(--text-secondary)';
-      buildChannelList();
-      showToast(friendsModeActive ? 'Friends mode activated' : 'Friends mode deactivated', 'success');
-    };
 
     window.showSection = function(sectionId) {
       sections.forEach(sec => sec.classList.remove('active-section'));
@@ -1137,7 +1036,7 @@ radioButtons.forEach(radio => {
       link.addEventListener('click', (e) => {
         e.preventDefault();
         const sec = link.dataset.section;
-        if ((sec === 'dashboard') && !currentUser) {
+        if (sec === 'dashboard' && !currentUser) {
           showToast('Please log in first', 'warning');
           showSection('join');
           return;
@@ -1154,7 +1053,6 @@ radioButtons.forEach(radio => {
         let cleanCode = meetCode.trim().replace(/\s+/g, '');
         if (cleanCode) {
           const meetLink = `https://zoom.us/j/${cleanCode}`;
-          const meetMessage = { id: nextMessageId++, sender: currentUser.name, text: `📹 Zoom Meet session started! Code: ${cleanCode}`, meetCode: cleanCode, meetLink: meetLink, timestamp: Date.now(), reactions: [], isMeetLink: true, isVideo: true };
           socket.emit('send-message', { room: currentChannel, user: currentUser.name, text: `📹 Zoom Meet session started! Code: ${cleanCode} - Join at ${meetLink}` });
           showToast('Zoom Meet code shared!', 'success');
         }
@@ -1179,10 +1077,7 @@ radioButtons.forEach(radio => {
       const gradeChannel = `${currentUser.grade} Channel`;
       channels.push(gradeChannel);
       if (!messages[gradeChannel]) messages[gradeChannel] = [{ id: nextMessageId++, sender: 'System', text: `Welcome, ${currentUser.grade} students! 📚`, timestamp: Date.now(), reactions: [] }];
-      if (friendsModeActive) {
-        channels.push('Friends Lounge');
-        if (!messages['Friends Lounge']) messages['Friends Lounge'] = [{ id: nextMessageId++, sender: 'System', text: 'Welcome to Friends Lounge! 👥', timestamp: Date.now(), reactions: [] }];
-      }
+
       channelListEl.innerHTML = '';
       channels.forEach(ch => {
         const li = document.createElement('li');
@@ -1192,6 +1087,7 @@ radioButtons.forEach(radio => {
         li.addEventListener('click', () => switchToChannel(ch));
         channelListEl.appendChild(li);
       });
+
       classListEl.innerHTML = '';
       if (currentUser.classes && currentUser.classes.length > 0) {
         currentUser.classes.forEach(cls => {
@@ -1208,7 +1104,7 @@ radioButtons.forEach(radio => {
 
     function switchToChannel(ch) {
       currentChannel = ch;
-      document.querySelectorAll('.channel-item, .class-item, .dm-item').forEach(el => el.classList.remove('active'));
+      document.querySelectorAll('.channel-item, .class-item').forEach(el => el.classList.remove('active'));
       const activeItem = [...document.querySelectorAll('.channel-item, .class-item')].find(el => el.dataset.channel === ch);
       if (activeItem) activeItem.classList.add('active');
       socket.emit('join-room', { room: ch });
@@ -1217,15 +1113,13 @@ radioButtons.forEach(radio => {
 
     function loadChannel(channel) {
       let displayName = channel;
-      if (channel.startsWith('dm:')) displayName = channel.substring(3);
       document.getElementById('channel-name').innerText = displayName;
       if (!messages[channel]) messages[channel] = [{ id: nextMessageId++, sender: 'System', text: `Welcome to ${displayName}!`, timestamp: Date.now(), reactions: [] }];
       renderMessages(messages[channel]);
+
       let online = [];
       if (channel === 'Global Lounge') online = users.map(u => u.name);
-      else if (channel === 'Friends Lounge') online = users.filter(u => u.friends?.includes(currentUser?.name)).map(u => u.name);
       else if (channel.endsWith(' Channel')) { const grade = channel.split(' ')[0]; online = users.filter(u => u.grade === grade).map(u => u.name); }
-      else if (channel.startsWith('dm:')) { const friendName = channel.substring(3); online = [currentUser.name, friendName]; }
       else online = users.filter(u => u.classes.includes(channel)).map(u => u.name);
       renderOnlineUsers(online);
     }
@@ -1236,21 +1130,8 @@ radioButtons.forEach(radio => {
         const div = document.createElement('div');
         div.className = 'message' + (msg.sender === currentUser?.name ? ' own-message' : '') + (msg.isMeetLink ? ' meet-message' : '');
         const time = new Date(msg.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-        let content = '';
-        if (msg.isMeetLink) {
-          if (msg.isScheduled) content = `<div><div style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px;"><i class="fas fa-calendar" style="color: #ffc107; font-size: 1.5rem;"></i><strong>Scheduled Zoom Meet</strong></div><p>Time: <strong>${msg.scheduledTime}</strong></p><p>Meeting Code:</p><div class="meet-code">${msg.meetCode}</div><a href="${msg.meetLink}" target="_blank" class="meet-link-btn"><i class="fab fa-zoom"></i> Join Zoom Meet</a></div>`;
-          else content = `<div><div style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px;"><i class="fas fa-video" style="color: var(--google-blue); font-size: 1.5rem;"></i><strong>Zoom Meet Started!</strong></div><p>Meeting Code:</p><div class="meet-code">${msg.meetCode}</div><a href="${msg.meetLink}" target="_blank" class="meet-link-btn"><i class="fab fa-zoom"></i> Join Zoom Meet</a></div>`;
-        } else content = msg.text;
-        let reactionsHtml = '';
-        if (msg.reactions && msg.reactions.length > 0) {
-          const reactionCounts = {};
-          msg.reactions.forEach(r => { reactionCounts[r.emoji] = (reactionCounts[r.emoji] || 0) + 1; });
-          reactionsHtml = '<div class="reactions">';
-          for (let emoji in reactionCounts) reactionsHtml += `<span class="reaction-badge" onclick="addReaction(${msg.id}, '${emoji}')">${emoji} ${reactionCounts[emoji]}</span>`;
-          reactionsHtml += '</div>';
-        }
-        div.innerHTML = `<div class="meta"><span class="sender">${msg.sender}</span><span class="time">${time}</span>${msg.isMeetLink ? '<span style="background: var(--google-blue); color: white; padding: 2px 8px; border-radius: 12px; font-size: 0.7rem; margin-left: 5px; font-weight: bold;">MEET</span>' : ''}${msg.isScheduled ? '<span style="background: #ffc107; color: black; padding: 2px 8px; border-radius: 12px; font-size: 0.7rem; margin-left: 5px; font-weight: bold;">SCHEDULED</span>' : ''}</div><div>${content}</div>${reactionsHtml}`;
-        if (content.includes('<img') && !content.includes('onclick')) div.querySelector('img')?.addEventListener('click', (e) => { const modal = document.getElementById('image-modal'); const modalImg = document.getElementById('modal-image'); modalImg.src = e.target.src; modal.classList.add('active'); });
+        let content = msg.text;
+        div.innerHTML = `<div class="meta"><span class="sender">${msg.sender}</span><span class="time">${time}</span></div><div>${content}</div>`;
         messageFeed.appendChild(div);
       });
     }
@@ -1258,46 +1139,12 @@ radioButtons.forEach(radio => {
     function renderOnlineUsers(usersList) {
       onlineListEl.innerHTML = '';
       usersList.forEach(name => {
-        const user = users.find(u => u.name === name);
         const li = document.createElement('li');
-        li.innerHTML = `<span class="name"><span class="online-dot">●</span><img src="${user?.avatar || 'https://i.pravatar.cc/150?img=' + Math.floor(Math.random() * 10)}" style="width: 24px; height: 24px; border-radius: 50%; object-fit: cover;"> ${name}</span>`;
-        if (currentUser && name !== currentUser.name) {
-          const currentUserObj = users.find(u => u.email === currentUser.email);
-          if (!currentUserObj.friends.includes(name)) {
-            const addIcon = document.createElement('i');
-            addIcon.className = 'fas fa-user-plus add-friend';
-            addIcon.title = 'Add friend';
-            addIcon.onclick = (e) => { e.stopPropagation(); addFriend(name); };
-            li.appendChild(addIcon);
-          }
-        }
+        li.innerHTML = `<span class="online-dot">●</span> ${name}`;
         onlineListEl.appendChild(li);
       });
       onlineCount.innerText = usersList.length;
     }
-
-    function addFriend(friendName) {
-      if (!currentUser) return;
-      const current = users.find(u => u.email === currentUser.email);
-      const friend = users.find(u => u.name === friendName);
-      if (!current || !friend) return;
-      if (current.friends.includes(friendName)) { showToast('Already friends!', 'info'); return; }
-      current.friends.push(friendName);
-      friend.friends.push(currentUser.name);
-      currentUser.friends = current.friends;
-      buildChannelList();
-      showToast(`You are now friends with ${friendName}! 🎉`, 'success');
-    }
-
-    window.addReaction = function(messageId, emoji) {
-      if (!currentUser) return;
-      const msg = messages[currentChannel].find(m => m.id === messageId);
-      if (msg) {
-        if (!msg.reactions) msg.reactions = [];
-        msg.reactions.push({ user: currentUser.name, emoji: emoji, timestamp: Date.now() });
-        renderMessages(messages[currentChannel]);
-      }
-    };
 
     window.sendMessage = function() {
       if (!currentUser) { showToast('Please log in to send messages', 'warning'); return; }
@@ -1314,7 +1161,7 @@ radioButtons.forEach(radio => {
       clearTimeout(typingTimer);
       typingTimer = setTimeout(() => { typingIndicator.innerText = ''; }, 1200);
     });
-    chatInput?.addEventListener('keypress', (e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); } });
+    chatInput?.addEventListener('keypress', (e) => { if (e.key === 'Enter') { e.preventDefault(); sendMessage(); } });
 
     document.getElementById('file-input')?.addEventListener('change', (e) => {
       const files = Array.from(e.target.files);
@@ -1341,51 +1188,57 @@ radioButtons.forEach(radio => {
     window.showImageModal = function(src) { const modal = document.getElementById('image-modal'); const modalImg = document.getElementById('modal-image'); modalImg.src = src; modal.classList.add('active'); };
     window.toggleEmojiPicker = function() { document.getElementById('emoji-picker').classList.toggle('active'); };
 
-    window.handleSearch = function(query) {
-      if (!query || query.length < 2) { if (searchResults) searchResults.style.display = 'none'; return; }
-      const results = [];
-      for (let channel in messages) {
-        messages[channel].forEach(msg => {
-          if (msg.text.toLowerCase().includes(query.toLowerCase())) results.push({ type: 'message', channel: channel, content: msg.text.substring(0, 50) + '...', sender: msg.sender, time: new Date(msg.timestamp).toLocaleDateString() });
-        });
-      }
-      users.forEach(user => { if (user.name.toLowerCase().includes(query.toLowerCase())) results.push({ type: 'user', name: user.name, grade: user.grade }); });
-      if (results.length > 0) {
-        if (searchResults) {
-          searchResults.innerHTML = results.map(r => {
-            if (r.type === 'message') return `<div class="search-result-item" onclick="jumpToMessage('${r.channel}')"><i class="fas fa-comment"></i> ${r.content}<small>${r.sender} · ${r.time}</small></div>`;
-            else return `<div class="search-result-item" onclick="startDM('${r.name}')"><i class="fas fa-user"></i> ${r.name}<small>${r.grade}</small></div>`;
-          }).join('');
-          searchResults.style.display = 'block';
-        }
-      } else { if (searchResults) searchResults.style.display = 'none'; }
-    };
-
-    // study
-    window.startstudy = function() {
+    // Study Timer Functions
+    window.startStudyTimer = function() {
       if (studyTimer.isRunning) return;
       studyTimer.isRunning = true;
       studyTimer.interval = setInterval(() => {
-        if (studyTimer.timeLeft > 0) { studyTimer.timeLeft--; updatestudyDisplay(); }
-        else {
-          if (studyTimer.mode === 'work') { studyTimer.mode = 'break'; studyTimer.timeLeft = studyTimer.breakTime; document.getElementById('study-phase').innerText = 'Break Time ☕'; showToast('Time for a break!', 'info'); }
-          else { studyTimer.mode = 'work'; studyTimer.timeLeft = studyTimer.workTime; document.getElementById('study-phase').innerText = 'Work Time 📚'; showToast('Break over! Back to work!', 'info'); }
+        if (studyTimer.timeLeft > 0) {
+          studyTimer.timeLeft--;
+          updateStudyDisplay();
+        } else {
+          if (studyTimer.mode === 'work') {
+            studyTimer.mode = 'break';
+            studyTimer.timeLeft = studyTimer.breakTime;
+            document.getElementById('study-phase').innerText = 'Break Time ☕';
+            showToast('Time for a break!', 'info');
+          } else {
+            studyTimer.mode = 'work';
+            studyTimer.timeLeft = studyTimer.workTime;
+            document.getElementById('study-phase').innerText = 'Work Time 📚';
+            showToast('Break over! Back to work!', 'info');
+          }
         }
       }, 1000);
     };
-    window.pausestudy = function() { studyTimer.isRunning = false; clearInterval(studyTimer.interval); };
-    window.resetstudy = function() { pausestudy(); studyTimer.mode = 'work'; studyTimer.timeLeft = studyTimer.workTime; document.getElementById('study-phase').innerText = 'Work Time 📚'; updatestudyDisplay(); };
-    function updatestudyDisplay() {
+    window.pauseStudyTimer = function() { studyTimer.isRunning = false; clearInterval(studyTimer.interval); };
+    window.resetStudyTimer = function() { pauseStudyTimer(); studyTimer.mode = 'work'; studyTimer.timeLeft = studyTimer.workTime; document.getElementById('study-phase').innerText = 'Work Time 📚'; updateStudyDisplay(); };
+    function updateStudyDisplay() {
       const minutes = Math.floor(studyTimer.timeLeft / 60);
       const seconds = studyTimer.timeLeft % 60;
       const timeString = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
       if (document.getElementById('study-display')) document.getElementById('study-display').innerText = timeString;
       if (document.getElementById('study-display-home')) document.getElementById('study-display-home').innerText = timeString;
     }
-    window.showstudyModal = function() { document.getElementById('study-modal').classList.add('active'); updatestudyDisplay(); };
-    window.closestudyModal = function() { document.getElementById('study-modal').classList.remove('active'); };
+    window.showStudyTimerModal = function() { document.getElementById('study-modal').classList.add('active'); updateStudyDisplay(); };
+    window.closeStudyTimerModal = function() { document.getElementById('study-modal').classList.remove('active'); };
 
-    // Auth
+    // Radio buttons for timer duration
+    const radioButtons = document.querySelectorAll('input[name="study-mode"]');
+    radioButtons.forEach(radio => {
+      radio.addEventListener('change', (e) => {
+        if (e.target.checked) {
+          const minutes = parseInt(e.target.value);
+          studyTimer.workTime = minutes * 60;
+          if (!studyTimer.isRunning) {
+            studyTimer.timeLeft = studyTimer.workTime;
+            updateStudyDisplay();
+          }
+        }
+      });
+    });
+
+    // Auth functions
     window.showLoginForm = function() { document.getElementById('login-form').style.display = 'block'; document.getElementById('register-form').style.display = 'none'; document.getElementById('forgot-form').style.display = 'none'; };
     window.showRegisterForm = function() { document.getElementById('login-form').style.display = 'none'; document.getElementById('register-form').style.display = 'block'; document.getElementById('forgot-form').style.display = 'none'; };
     window.showForgotPassword = function() { document.getElementById('login-form').style.display = 'none'; document.getElementById('register-form').style.display = 'none'; document.getElementById('forgot-form').style.display = 'block'; };
@@ -1419,7 +1272,7 @@ radioButtons.forEach(radio => {
       if (pwd.length < 8) { document.getElementById('register-error').innerText = 'Password must be at least 8 characters'; return; }
       if (pwd !== confirmPwd) { document.getElementById('register-error').innerText = 'Passwords do not match'; return; }
       if (users.find(u => u.email === email)) { document.getElementById('register-error').innerText = 'Email already exists'; return; }
-      const newUser = { id: users.length + 1, name, email, grade, classes: selectedClasses, password: pwd, friends: [], avatar: `https://i.pravatar.cc/150?img=${users.length + 1}`, status: 'online', studyGroups: [] };
+      const newUser = { id: users.length + 1, name, email, grade, classes: selectedClasses, password: pwd, friends: [], avatar: `https://i.pravatar.cc/150?img=${users.length + 1}`, status: 'online' };
       users.push(newUser);
       currentUser = { name, email, grade, classes: selectedClasses, friends: [], avatar: newUser.avatar };
       localStorage.setItem('bmc_user', JSON.stringify(currentUser));
@@ -1448,8 +1301,6 @@ radioButtons.forEach(radio => {
 
     window.logout = function() {
       currentUser = null;
-      friendsModeActive = false;
-      if (friendsToggleIcon) friendsToggleIcon.style.color = 'var(--text-secondary)';
       localStorage.removeItem('bmc_user');
       sessionStorage.removeItem('bmc_user');
       dashboardNav.style.display = 'none';
@@ -1473,9 +1324,6 @@ radioButtons.forEach(radio => {
       }
     };
 
-    window.startNewDM = function() { showToast('Direct messages feature coming soon!', 'info'); };
-    window.startDM = function(friendName) { addFriend(friendName); switchToChannel(`dm:${friendName}`); if (searchResults) searchResults.style.display = 'none'; if (searchInput) searchInput.value = ''; };
-    window.jumpToMessage = function(channel) { switchToChannel(channel); if (searchResults) searchResults.style.display = 'none'; if (searchInput) searchInput.value = ''; };
     window.refreshClasses = function() { buildChannelList(); showToast('Classes refreshed', 'success'); };
     window.showChannelInfo = function() { showToast(`Channel: ${currentChannel}`, 'info'); };
 
@@ -1493,10 +1341,8 @@ radioButtons.forEach(radio => {
 
     window.onclick = function(event) { if (event.target.classList.contains('modal')) event.target.classList.remove('active'); };
     document.addEventListener('keydown', (e) => {
-      if (e.ctrlKey && e.key === 'k') { e.preventDefault(); document.getElementById('global-search')?.focus(); }
-      if (e.key === 'Escape') { document.querySelectorAll('.modal.active').forEach(modal => modal.classList.remove('active')); document.getElementById('emoji-picker')?.classList.remove('active'); if (searchResults) searchResults.style.display = 'none'; }
+      if (e.key === 'Escape') { document.querySelectorAll('.modal.active').forEach(modal => modal.classList.remove('active')); document.getElementById('emoji-picker')?.classList.remove('active'); }
     });
-    document.addEventListener('click', (e) => { if (!e.target.closest('.search-bar') && searchResults) searchResults.style.display = 'none'; });
 
     // Socket.IO handlers
     socket.on('connect', () => console.log('Connected'));
@@ -1506,7 +1352,6 @@ radioButtons.forEach(radio => {
         const newMsg = { id: nextMessageId++, sender: data.user, text: data.text, timestamp: data.timestamp, reactions: [] };
         messages[data.room].push(newMsg);
         renderMessages(messages[data.room]);
-        if (data.user !== currentUser?.name) { /* play notification sound if desired */ }
       } else {
         if (!messages[data.room]) messages[data.room] = [];
         messages[data.room].push({ id: nextMessageId++, sender: data.user, text: data.text, timestamp: data.timestamp, reactions: [] });
@@ -1514,7 +1359,7 @@ radioButtons.forEach(radio => {
     });
     socket.on('user-list', (userList) => renderOnlineUsers(userList));
 
-    console.log('BMC Study Buddy with Zoom integration loaded!');
+    console.log('BMC Study Buddy - Simplified Version');
   })();
 </script>
 </body>
