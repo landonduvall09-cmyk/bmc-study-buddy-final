@@ -14,7 +14,6 @@ cat > public/index.html << 'EOF'
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <script src="/socket.io/socket.io.js"></script>
   <style>
-    /* ---------- THEME VARIABLES ---------- */
     :root {
       --bg-primary: #0a0a0a;
       --bg-secondary: #121212;
@@ -57,7 +56,7 @@ cat > public/index.html << 'EOF'
       margin: 0;
       padding: 0;
       box-sizing: border-box;
-      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      font-family: 'Inter', sans-serif;
     }
 
     body {
@@ -66,21 +65,11 @@ cat > public/index.html << 'EOF'
       line-height: 1.5;
       transition: background-color 0.3s, color 0.3s;
       min-height: 100vh;
-      display: flex;
-      flex-direction: column;
     }
 
-    ::-webkit-scrollbar {
-      width: 8px;
-      height: 8px;
-    }
-    ::-webkit-scrollbar-track {
-      background: var(--bg-secondary);
-    }
-    ::-webkit-scrollbar-thumb {
-      background: var(--primary-green);
-      border-radius: 4px;
-    }
+    ::-webkit-scrollbar { width: 8px; }
+    ::-webkit-scrollbar-track { background: var(--bg-secondary); }
+    ::-webkit-scrollbar-thumb { background: var(--primary-green); border-radius: 4px; }
 
     .navbar {
       background-color: var(--bg-secondary);
@@ -105,9 +94,7 @@ cat > public/index.html << 'EOF'
       align-items: center;
       gap: 0.5rem;
     }
-    .logo i {
-      color: var(--accent-green);
-    }
+    .logo i { color: var(--accent-green); }
 
     .nav-links {
       display: flex;
@@ -138,7 +125,6 @@ cat > public/index.html << 'EOF'
       color: var(--text-secondary);
       font-size: 1.3rem;
       cursor: pointer;
-      transition: all 0.2s;
       padding: 0.5rem;
       border-radius: 50%;
     }
@@ -152,16 +138,13 @@ cat > public/index.html << 'EOF'
       margin: 2rem auto;
       padding: 0 1.5rem;
       flex: 1;
-      width: 100%;
     }
 
     .section {
       display: none;
       animation: fadeIn 0.3s ease;
     }
-    .section.active-section {
-      display: block;
-    }
+    .section.active-section { display: block; }
     @keyframes fadeIn {
       from { opacity: 0; transform: translateY(10px); }
       to { opacity: 1; transform: translateY(0); }
@@ -182,14 +165,8 @@ cat > public/index.html << 'EOF'
       border: 1px solid var(--border-color);
       text-align: center;
     }
-    .card:hover {
-      transform: translateY(-4px);
-    }
-    .card i {
-      font-size: 2.5rem;
-      color: var(--accent-green);
-      margin-bottom: 1.2rem;
-    }
+    .card:hover { transform: translateY(-4px); }
+    .card i { font-size: 2.5rem; color: var(--accent-green); margin-bottom: 1.2rem; }
 
     .btn {
       background: var(--primary-green);
@@ -198,7 +175,6 @@ cat > public/index.html << 'EOF'
       padding: 0.8rem 2rem;
       border-radius: 40px;
       font-weight: 600;
-      font-size: 1rem;
       cursor: pointer;
       transition: all 0.2s;
       display: inline-block;
@@ -235,14 +211,8 @@ cat > public/index.html << 'EOF'
       border: 1px solid var(--border-color);
     }
 
-    .form-group {
-      margin-bottom: 1.5rem;
-    }
-    .form-group label {
-      display: block;
-      margin-bottom: 0.4rem;
-      color: var(--text-secondary);
-    }
+    .form-group { margin-bottom: 1.5rem; }
+    .form-group label { display: block; margin-bottom: 0.4rem; color: var(--text-secondary); }
     .form-group input, .form-group select {
       width: 100%;
       background: var(--bg-secondary);
@@ -260,33 +230,13 @@ cat > public/index.html << 'EOF'
       max-height: 300px;
       overflow-y: auto;
     }
-    .category-group {
-      margin-bottom: 1rem;
-    }
-    .category-title {
-      color: var(--accent-green);
-      font-weight: 600;
-      margin-bottom: 0.3rem;
-    }
-    .checkbox-item {
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-      padding: 0.3rem 0.5rem;
-    }
-    .checkbox-item input {
-      width: auto;
-    }
+    .category-group { margin-bottom: 1rem; }
+    .category-title { color: var(--accent-green); font-weight: 600; margin-bottom: 0.3rem; }
+    .checkbox-item { display: flex; align-items: center; gap: 0.5rem; padding: 0.3rem 0.5rem; }
+    .checkbox-item input { width: auto; }
 
-    .toggle-link {
-      text-align: center;
-      margin-top: 1.2rem;
-      color: var(--text-secondary);
-      cursor: pointer;
-    }
-    .toggle-link:hover {
-      color: var(--accent-green);
-    }
+    .toggle-link { text-align: center; margin-top: 1.2rem; color: var(--text-secondary); cursor: pointer; }
+    .toggle-link:hover { color: var(--accent-green); }
 
     .dashboard-panels {
       display: flex;
@@ -304,10 +254,7 @@ cat > public/index.html << 'EOF'
       border: 1px solid var(--border-color);
     }
 
-    .sidebar-section {
-      margin-bottom: 1.8rem;
-    }
-
+    .sidebar-section { margin-bottom: 1.8rem; }
     .sidebar-heading {
       color: var(--text-secondary);
       font-size: 0.9rem;
@@ -318,14 +265,9 @@ cat > public/index.html << 'EOF'
       justify-content: space-between;
       align-items: center;
     }
-    .sidebar-heading i {
-      color: var(--accent-green);
-      cursor: pointer;
-    }
+    .sidebar-heading i { color: var(--accent-green); cursor: pointer; }
 
-    .channel-list, .class-list {
-      list-style: none;
-    }
+    .channel-list, .class-list { list-style: none; }
     .channel-item, .class-item {
       padding: 0.6rem 1rem;
       margin: 0.2rem 0;
@@ -337,18 +279,9 @@ cat > public/index.html << 'EOF'
       align-items: center;
       gap: 0.6rem;
     }
-    .channel-item i, .class-item i {
-      width: 1.5rem;
-      color: var(--accent-green);
-    }
-    .channel-item:hover, .class-item:hover {
-      background: var(--bg-hover);
-      color: var(--text-primary);
-    }
-    .channel-item.active, .class-item.active {
-      background: var(--primary-green);
-      color: white;
-    }
+    .channel-item i, .class-item i { width: 1.5rem; color: var(--accent-green); }
+    .channel-item:hover, .class-item:hover { background: var(--bg-hover); color: var(--text-primary); }
+    .channel-item.active, .class-item.active { background: var(--primary-green); color: white; }
 
     .center-panel {
       flex: 1;
@@ -370,13 +303,8 @@ cat > public/index.html << 'EOF'
       justify-content: space-between;
       align-items: center;
     }
-    .chat-header-actions {
-      display: flex;
-      gap: 1rem;
-    }
-    .chat-header-actions i {
-      cursor: pointer;
-    }
+    .chat-header-actions { display: flex; gap: 1rem; }
+    .chat-header-actions i { cursor: pointer; }
 
     .message-feed {
       flex: 1;
@@ -404,44 +332,19 @@ cat > public/index.html << 'EOF'
       border-left: 4px solid var(--google-blue);
     }
 
-    .message .meta {
-      display: flex;
-      gap: 0.8rem;
-      margin-bottom: 0.3rem;
-    }
-    .message .sender {
-      font-weight: 600;
-      color: var(--accent-green);
-    }
-    .message .time {
-      font-size: 0.7rem;
-      color: var(--text-muted);
-    }
+    .message .meta { display: flex; gap: 0.8rem; margin-bottom: 0.3rem; }
+    .message .sender { font-weight: 600; color: var(--accent-green); }
+    .message .time { font-size: 0.7rem; color: var(--text-muted); }
 
     .meet-code {
       background: var(--bg-primary);
       padding: 0.5rem 1rem;
       border-radius: 12px;
       font-family: monospace;
-      font-size: 1.2rem;
       display: inline-block;
       margin: 0.5rem 0;
       border: 1px solid var(--google-blue);
       color: var(--google-blue);
-    }
-
-    .meet-link-btn {
-      background: var(--google-blue);
-      color: white;
-      border: none;
-      padding: 0.8rem 1.5rem;
-      border-radius: 40px;
-      font-weight: 600;
-      cursor: pointer;
-      display: inline-flex;
-      align-items: center;
-      gap: 0.8rem;
-      text-decoration: none;
     }
 
     .typing-indicator {
@@ -486,24 +389,10 @@ cat > public/index.html << 'EOF'
       overflow-y: auto;
     }
 
-    .online-list {
-      list-style: none;
-      margin-top: 1rem;
-    }
-    .online-list li {
-      padding: 0.5rem;
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-      border-radius: 8px;
-    }
-    .online-list li:hover {
-      background: var(--bg-hover);
-    }
-    .online-dot {
-      color: var(--success);
-      font-size: 0.8rem;
-    }
+    .online-list { list-style: none; margin-top: 1rem; }
+    .online-list li { padding: 0.5rem; display: flex; align-items: center; gap: 0.5rem; border-radius: 8px; }
+    .online-list li:hover { background: var(--bg-hover); }
+    .online-dot { color: var(--success); font-size: 0.8rem; }
 
     .pomodoro-timer {
       background: var(--bg-card);
@@ -513,18 +402,8 @@ cat > public/index.html << 'EOF'
       text-align: center;
       border: 1px solid var(--border-color);
     }
-    .timer-display {
-      font-size: 4rem;
-      font-weight: 700;
-      color: var(--accent-green);
-      margin: 1rem 0;
-    }
-    .timer-controls {
-      display: flex;
-      gap: 1rem;
-      justify-content: center;
-      flex-wrap: wrap;
-    }
+    .timer-display { font-size: 4rem; font-weight: 700; color: var(--accent-green); margin: 1rem 0; }
+    .timer-controls { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; }
 
     .modal {
       display: none;
@@ -538,9 +417,7 @@ cat > public/index.html << 'EOF'
       align-items: center;
       justify-content: center;
     }
-    .modal.active {
-      display: flex;
-    }
+    .modal.active { display: flex; }
     .modal-content {
       background: var(--bg-card);
       padding: 2rem;
@@ -582,7 +459,6 @@ cat > public/index.html << 'EOF'
 </head>
 <body>
 
-<!-- Navigation -->
 <div class="navbar">
   <div class="logo" onclick="showSection('home')">
     <i class="fas fa-graduation-cap"></i>
@@ -609,24 +485,11 @@ cat > public/index.html << 'EOF'
       <p style="color: var(--text-secondary); font-size: 1.2rem;">Your all-in-one study companion with Zoom integration!</p>
     </div>
     <div class="card-grid">
-      <div class="card">
-        <i class="fas fa-users"></i>
-        <h3>Study Together</h3>
-        <p>Join live study sessions with classmates.</p>
-      </div>
-      <div class="card">
-        <i class="fas fa-question-circle"></i>
-        <h3>Homework Help</h3>
-        <p>Get instant help in subject channels.</p>
-      </div>
-      <div class="card">
-        <i class="fab fa-zoom" style="color: var(--google-blue);"></i>
-        <h3>Zoom</h3>
-        <p>Create and share meeting links instantly.</p>
-      </div>
+      <div class="card"><i class="fas fa-users"></i><h3>Study Together</h3><p>Join live study sessions with classmates.</p></div>
+      <div class="card"><i class="fas fa-question-circle"></i><h3>Homework Help</h3><p>Get instant help in subject channels.</p></div>
+      <div class="card"><i class="fab fa-zoom" style="color: var(--google-blue);"></i><h3>Zoom</h3><p>Create and share meeting links instantly.</p></div>
     </div>
 
-    <!-- Study Timer Preview -->
     <div class="pomodoro-timer">
       <h2>📚 Study Timer</h2>
       <div class="timer-display" id="study-display-home">25:00</div>
@@ -642,127 +505,52 @@ cat > public/index.html << 'EOF'
   <div id="about-section" class="section">
     <h1 style="font-size: 3rem; margin-bottom: 2rem;">About BMC Study Buddy</h1>
     <div class="card-grid">
-      <div class="card">
-        <i class="fas fa-users"></i>
-        <h2>Who We Are</h2>
-        <p>"For students, by students." A collaborative environment built by BMC students.</p>
-      </div>
-      <div class="card">
-        <i class="fas fa-bullseye"></i>
-        <h2>Our Mission</h2>
-        <p>Helping students succeed through collaboration and peer support.</p>
-      </div>
-      <div class="card">
-        <i class="fas fa-heart"></i>
-        <h2>Community</h2>
-        <p>A supportive study environment where students help each other.</p>
-      </div>
+      <div class="card"><i class="fas fa-users"></i><h2>Who We Are</h2><p>"For students, by students."</p></div>
+      <div class="card"><i class="fas fa-bullseye"></i><h2>Our Mission</h2><p>Helping students succeed through collaboration.</p></div>
+      <div class="card"><i class="fas fa-heart"></i><h2>Community</h2><p>A supportive study environment.</p></div>
     </div>
   </div>
 
-  <!-- HOW IT WORKS SECTION -->
+  <!-- HOW IT WORKS -->
   <div id="how-section" class="section">
     <h1 style="font-size: 3rem; text-align: center; margin-bottom: 2rem;">How It Works</h1>
     <div style="display: flex; flex-wrap: wrap; gap: 2rem; justify-content: center;">
-      <div class="card" style="flex: 1 1 200px; text-align: center;">
-        <i class="fas fa-user-plus"></i>
-        <h3>1. Create Account</h3>
-        <p>Sign up with your school email</p>
-      </div>
-      <div class="card" style="flex: 1 1 200px; text-align: center;">
-        <i class="fas fa-book-open"></i>
-        <h3>2. Select Classes</h3>
-        <p>Choose your current courses</p>
-      </div>
-      <div class="card" style="flex: 1 1 200px; text-align: center;">
-        <i class="fas fa-comments"></i>
-        <h3>3. Join Channels</h3>
-        <p>Participate in discussions</p>
-      </div>
-      <div class="card" style="flex: 1 1 200px; text-align: center;">
-        <i class="fab fa-zoom" style="color: var(--google-blue);"></i>
-        <h3>4. Zoom</h3>
-        <p>Create and share meeting links</p>
-      </div>
+      <div class="card" style="flex: 1 1 200px; text-align: center;"><i class="fas fa-user-plus"></i><h3>1. Create Account</h3><p>Sign up with your school email</p></div>
+      <div class="card" style="flex: 1 1 200px; text-align: center;"><i class="fas fa-book-open"></i><h3>2. Select Classes</h3><p>Choose your current courses</p></div>
+      <div class="card" style="flex: 1 1 200px; text-align: center;"><i class="fas fa-comments"></i><h3>3. Join Channels</h3><p>Participate in discussions</p></div>
+      <div class="card" style="flex: 1 1 200px; text-align: center;"><i class="fab fa-zoom" style="color: var(--google-blue);"></i><h3>4. Zoom</h3><p>Create and share meeting links</p></div>
     </div>
   </div>
 
-  <!-- JOIN / LOGIN SECTION -->
+  <!-- JOIN SECTION -->
   <div id="join-section" class="section">
     <div class="auth-card">
       <h2 style="text-align: center; margin-bottom: 1.5rem;">Welcome to BMC Study Buddy</h2>
-
-      <!-- Login Form -->
       <div id="login-form">
-        <div class="form-group">
-          <label><i class="fas fa-envelope"></i> School email (@bmcchs.org)</label>
-          <input type="email" id="login-email" placeholder="student@bmcchs.org">
-        </div>
-        <div class="form-group">
-          <label><i class="fas fa-lock"></i> Password</label>
-          <input type="password" id="login-password" placeholder="••••••••">
-        </div>
-        <div class="form-group">
-          <label>
-            <input type="checkbox" id="remember-me"> Remember me
-          </label>
-        </div>
-        <button class="btn" style="width:100%;" onclick="handleLogin()">
-          <i class="fas fa-sign-in-alt"></i> Log In
-        </button>
+        <div class="form-group"><label><i class="fas fa-envelope"></i> School email (@bmcchs.org)</label><input type="email" id="login-email" placeholder="student@bmcchs.org"></div>
+        <div class="form-group"><label><i class="fas fa-lock"></i> Password</label><input type="password" id="login-password" placeholder="••••••••"></div>
+        <div class="form-group"><label><input type="checkbox" id="remember-me"> Remember me</label></div>
+        <button class="btn" style="width:100%;" onclick="handleLogin()"><i class="fas fa-sign-in-alt"></i> Log In</button>
         <div class="toggle-link" onclick="showRegisterForm()">Don't have an account? Register</div>
         <div class="toggle-link" onclick="showForgotPassword()">Forgot password?</div>
         <div id="login-error" class="error-msg"></div>
       </div>
 
-      <!-- Register Form -->
       <div id="register-form" style="display:none;">
-        <div class="form-group">
-          <label><i class="fas fa-user"></i> Full name</label>
-          <input type="text" id="reg-name" placeholder="John Doe">
-        </div>
-        <div class="form-group">
-          <label><i class="fas fa-envelope"></i> School email (@bmcchs.org)</label>
-          <input type="email" id="reg-email" placeholder="student@bmcchs.org">
-        </div>
-        <div class="form-group">
-          <label><i class="fas fa-graduation-cap"></i> Grade</label>
-          <select id="reg-grade">
-            <option>9th Grade</option>
-            <option>10th Grade</option>
-            <option>11th Grade</option>
-            <option>12th Grade</option>
-          </select>
-        </div>
-        <div class="form-group">
-          <label><i class="fas fa-book"></i> Select your classes</label>
-          <div id="course-checkboxes-container" class="course-checkboxes"></div>
-        </div>
-        <div class="form-group">
-          <label><i class="fas fa-lock"></i> Password</label>
-          <input type="password" id="reg-password" placeholder="••••••••">
-          <small>Minimum 8 characters</small>
-        </div>
-        <div class="form-group">
-          <label><i class="fas fa-lock"></i> Confirm Password</label>
-          <input type="password" id="reg-confirm-password" placeholder="••••••••">
-        </div>
-        <button class="btn" style="width:100%;" onclick="handleRegister()">
-          <i class="fas fa-user-plus"></i> Register
-        </button>
+        <div class="form-group"><label><i class="fas fa-user"></i> Full name</label><input type="text" id="reg-name" placeholder="John Doe"></div>
+        <div class="form-group"><label><i class="fas fa-envelope"></i> School email (@bmcchs.org)</label><input type="email" id="reg-email" placeholder="student@bmcchs.org"></div>
+        <div class="form-group"><label><i class="fas fa-graduation-cap"></i> Grade</label><select id="reg-grade"><option>9th Grade</option><option>10th Grade</option><option>11th Grade</option><option>12th Grade</option></select></div>
+        <div class="form-group"><label><i class="fas fa-book"></i> Select your classes</label><div id="course-checkboxes-container" class="course-checkboxes"></div></div>
+        <div class="form-group"><label><i class="fas fa-lock"></i> Password</label><input type="password" id="reg-password" placeholder="••••••••"><small>Minimum 8 characters</small></div>
+        <div class="form-group"><label><i class="fas fa-lock"></i> Confirm Password</label><input type="password" id="reg-confirm-password" placeholder="••••••••"></div>
+        <button class="btn" style="width:100%;" onclick="handleRegister()"><i class="fas fa-user-plus"></i> Register</button>
         <div class="toggle-link" onclick="showLoginForm()">Back to login</div>
         <div id="register-error" class="error-msg"></div>
       </div>
 
-      <!-- Forgot Password Form -->
       <div id="forgot-form" style="display:none;">
-        <div class="form-group">
-          <label><i class="fas fa-envelope"></i> School email</label>
-          <input type="email" id="forgot-email" placeholder="student@bmcchs.org">
-        </div>
-        <button class="btn" style="width:100%;" onclick="handleForgotPassword()">
-          <i class="fas fa-paper-plane"></i> Send Reset Link
-        </button>
+        <div class="form-group"><label><i class="fas fa-envelope"></i> School email</label><input type="email" id="forgot-email" placeholder="student@bmcchs.org"></div>
+        <button class="btn" style="width:100%;" onclick="handleForgotPassword()"><i class="fas fa-paper-plane"></i> Send Reset Link</button>
         <div class="toggle-link" onclick="showLoginForm()">Back to login</div>
         <div id="forgot-error" class="error-msg"></div>
         <div id="forgot-success" class="success-msg"></div>
@@ -773,43 +561,25 @@ cat > public/index.html << 'EOF'
   <!-- DASHBOARD SECTION -->
   <div id="dashboard-section" class="section">
     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; flex-wrap: wrap;">
-      <div>
-        <h2><i class="fas fa-tachometer-alt" style="color: var(--accent-green);"></i> Study Dashboard</h2>
-        <p>Welcome back, <span id="current-user-name" style="color: var(--accent-green); font-weight: 600;"></span>!</p>
-      </div>
+      <div><h2><i class="fas fa-tachometer-alt" style="color: var(--accent-green);"></i> Study Dashboard</h2><p>Welcome back, <span id="current-user-name" style="color: var(--accent-green); font-weight: 600;"></span>!</p></div>
       <div style="display: flex; gap: 1rem;">
-        <button class="btn btn-outline" onclick="showStudyTimerModal()">
-          <i class="fas fa-clock"></i> Study Timer
-        </button>
-        <button class="btn btn-outline" onclick="logout()">
-          <i class="fas fa-sign-out-alt"></i> Logout
-        </button>
+        <button class="btn btn-outline" onclick="showStudyTimerModal()"><i class="fas fa-clock"></i> Study Timer</button>
+        <button class="btn btn-outline" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Logout</button>
       </div>
     </div>
 
     <div class="dashboard-panels">
-      <!-- Left Sidebar -->
       <div class="left-sidebar">
-        <!-- Channels Section -->
         <div class="sidebar-section">
-          <div class="sidebar-heading">
-            <span><i class="fas fa-hashtag"></i> Channels</span>
-            <i class="fas fa-plus" onclick="createChannel()" title="Create channel"></i>
-          </div>
+          <div class="sidebar-heading"><span><i class="fas fa-hashtag"></i> Channels</span><i class="fas fa-plus" onclick="createChannel()" title="Create channel"></i></div>
           <ul class="channel-list" id="channel-list"></ul>
         </div>
-
-        <!-- Your Classes Section -->
         <div class="sidebar-section">
-          <div class="sidebar-heading">
-            <span><i class="fas fa-book"></i> Your Classes</span>
-            <i class="fas fa-sync" onclick="refreshClasses()" title="Refresh"></i>
-          </div>
+          <div class="sidebar-heading"><span><i class="fas fa-book"></i> Your Classes</span><i class="fas fa-sync" onclick="refreshClasses()" title="Refresh"></i></div>
           <ul class="class-list" id="class-list"></ul>
         </div>
       </div>
 
-      <!-- Center Chat Panel -->
       <div class="center-panel">
         <div class="chat-header">
           <span><i class="fas fa-hashtag"></i> <span id="channel-name">Global Lounge</span></span>
@@ -826,32 +596,19 @@ cat > public/index.html << 'EOF'
         <div class="chat-input-area">
           <button id="emoji-btn" onclick="toggleEmojiPicker()"><i class="fas fa-smile"></i></button>
           <input type="text" id="chat-input" placeholder="Type a message...">
-          <button id="upload-btn" onclick="document.getElementById('file-input').click()">
-            <i class="fas fa-paperclip"></i>
-          </button>
-          <button id="zoom-meet-btn" onclick="createZoomMeet()">
-            <i class="fab fa-zoom"></i>
-          </button>
-          <button id="send-btn" onclick="sendMessage()">
-            <i class="fas fa-paper-plane"></i>
-          </button>
-          <input type="file" id="file-input" style="display:none;" accept="image/*, .pdf, .doc, .docx" multiple>
+          <button id="zoom-meet-btn" onclick="createZoomMeet()"><i class="fab fa-zoom"></i></button>
+          <button id="send-btn" onclick="sendMessage()"><i class="fas fa-paper-plane"></i></button>
         </div>
 
         <div id="emoji-picker" class="emoji-picker"></div>
       </div>
 
-      <!-- Right Sidebar - Online Users -->
       <div class="right-sidebar">
         <h3><i class="fas fa-circle" style="color: var(--success);"></i> Online — <span id="online-count">0</span></h3>
         <ul class="online-list" id="online-list"></ul>
-
-        <!-- Zoom Quick Access -->
         <div style="margin-top: 2rem;">
           <h3><i class="fab fa-zoom" style="color: var(--google-blue);"></i> Quick Meet</h3>
-          <button class="zoom-meet-btn" style="width:100%; margin-top:1rem;" onclick="createZoomMeet()">
-            <i class="fas fa-video"></i> New Zoom Meet
-          </button>
+          <button class="zoom-meet-btn" style="width:100%; margin-top:1rem;" onclick="createZoomMeet()"><i class="fas fa-video"></i> New Zoom Meet</button>
         </div>
       </div>
     </div>
@@ -861,15 +618,10 @@ cat > public/index.html << 'EOF'
 <!-- Study Timer Modal -->
 <div id="study-modal" class="modal">
   <div class="modal-content">
-    <div class="modal-header">
-      <h2><i class="fas fa-clock"></i> Study Timer</h2>
-      <span class="close-modal" onclick="closeStudyTimerModal()">&times;</span>
-    </div>
+    <div class="modal-header"><h2><i class="fas fa-clock"></i> Study Timer</h2><span class="close-modal" onclick="closeStudyTimerModal()">&times;</span></div>
     <div class="pomodoro-timer">
       <div class="timer-display" id="study-display">25:00</div>
-      <div style="text-align: center; margin: 1rem 0;">
-        <span id="study-phase" style="color: var(--accent-green);">Work Time</span>
-      </div>
+      <div style="text-align: center; margin: 1rem 0;"><span id="study-phase" style="color: var(--accent-green);">Work Time</span></div>
       <div class="timer-controls">
         <button class="btn" onclick="startStudyTimer()"><i class="fas fa-play"></i> Start</button>
         <button class="btn btn-outline" onclick="pauseStudyTimer()"><i class="fas fa-pause"></i> Pause</button>
@@ -884,11 +636,6 @@ cat > public/index.html << 'EOF'
   </div>
 </div>
 
-<!-- Image Preview Modal -->
-<div id="image-modal" class="modal" onclick="this.classList.remove('active')">
-  <img id="modal-image" style="max-width: 90%; max-height: 90%; border-radius: 14px;">
-</div>
-
 <!-- Toast Notifications -->
 <div id="toast-container" class="toast-container"></div>
 
@@ -897,7 +644,6 @@ cat > public/index.html << 'EOF'
   const socket = io({ transports: ['polling', 'websocket'] });
 
   (function() {
-    // ---------- COURSE DATA ----------
     const courseCategories = {
       "ENGLISH": [ "Honors: English 2", "Honors: English 3", "Yearbook Productions", "College Prep: English 1", "College Prep: English 2", "College Prep: English 3 Advanced", "English 4", "Dual Enrollment: ENG 101", "ENG 102", "ENG 205", "Electives: Young Adult Literature", "Poetry", "Contemporary Literature" ],
       "MATHEMATICS": [ "Honors: Algebra 2", "Honors: Geometry", "Honors: Pre-Calculus", "College Prep: Algebra 1", "Algebra 2 Advanced", "Geometry Advanced", "Precalculus Advanced", "Probability & Statistics", "Dual Enrollment: MAT 110", "MAT 111", "MAT 120", "MAT 140", "MAT 141" ],
@@ -910,7 +656,6 @@ cat > public/index.html << 'EOF'
       "ELECTIVES": [ "SAT Prep", "Senior Project", "Freshman Success", "Teacher Cadet", "Dual Enrollment: PSY 201", "PSY 203", "SOC 101" ]
     };
 
-    // ---------- GLOBAL STATE ----------
     let currentUser = null;
     let currentChannel = 'Global Lounge';
     let notifications = [];
@@ -932,11 +677,8 @@ cat > public/index.html << 'EOF'
       { id: 3, name: 'Jaxon Maddox', email: 'jaxonmad66@bmcchs.org', grade: '9th Grade', classes: ['Honors: English 3', 'Dual Enrollment: MAT 140'], password: 'bmcstudybuddy', friends: [], avatar: 'https://codehs.com/uploads/479f3258c745682680edfaf33457102f', status: 'online' }
     ];
 
-    const messages = {
-      'Global Lounge': [{ id: 1, sender: 'System', text: 'Welcome to Global Lounge! 👋', timestamp: Date.now(), reactions: [] }]
-    };
+    const messages = { 'Global Lounge': [{ id: 1, sender: 'System', text: 'Welcome to Global Lounge! 👋', timestamp: Date.now(), reactions: [] }] };
 
-    // DOM Elements
     const sections = document.querySelectorAll('.section');
     const navLinks = document.querySelectorAll('.nav-links a');
     const dashboardNav = document.getElementById('dashboard-nav-link');
@@ -954,10 +696,7 @@ cat > public/index.html << 'EOF'
     function initEmojiPicker() {
       if (window.EmojiMart) {
         const picker = new EmojiMart.Picker({
-          onSelect: (emoji) => {
-            chatInput.value += emoji.native;
-            toggleEmojiPicker();
-          },
+          onSelect: (emoji) => { chatInput.value += emoji.native; toggleEmojiPicker(); },
           theme: document.body.classList.contains('light-theme') ? 'light' : 'dark',
           set: 'apple'
         });
@@ -1047,16 +786,12 @@ cat > public/index.html << 'EOF'
 
     window.createZoomMeet = function() {
       if (!currentUser) { showToast('Please log in first', 'warning'); return; }
+      const randomId = Math.floor(Math.random() * 90000000000) + 10000000000;
+      const meetCode = randomId.toString();
+      const meetLink = `https://zoom.us/j/${meetCode}`;
       window.open('https://zoom.us/join', '_blank');
-      const meetCode = prompt('Enter the Zoom Meet code:', 'abc-defg-hij');
-      if (meetCode) {
-        let cleanCode = meetCode.trim().replace(/\s+/g, '');
-        if (cleanCode) {
-          const meetLink = `https://zoom.us/j/${cleanCode}`;
-          socket.emit('send-message', { room: currentChannel, user: currentUser.name, text: `📹 Zoom Meet session started! Code: ${cleanCode} - Join at ${meetLink}` });
-          showToast('Zoom Meet code shared!', 'success');
-        }
-      }
+      socket.emit('send-message', { room: currentChannel, user: currentUser.name, text: `🎥 Zoom Meet created! Join at: ${meetLink}\nMeeting ID: ${meetCode}` });
+      showToast('Zoom Meet created and shared!', 'success');
     };
 
     window.scheduleCall = function() {
@@ -1128,10 +863,9 @@ cat > public/index.html << 'EOF'
       messageFeed.innerHTML = '';
       msgs.slice().reverse().forEach(msg => {
         const div = document.createElement('div');
-        div.className = 'message' + (msg.sender === currentUser?.name ? ' own-message' : '') + (msg.isMeetLink ? ' meet-message' : '');
+        div.className = 'message' + (msg.sender === currentUser?.name ? ' own-message' : '');
         const time = new Date(msg.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-        let content = msg.text;
-        div.innerHTML = `<div class="meta"><span class="sender">${msg.sender}</span><span class="time">${time}</span></div><div>${content}</div>`;
+        div.innerHTML = `<div class="meta"><span class="sender">${msg.sender}</span><span class="time">${time}</span></div><div>${msg.text}</div>`;
         messageFeed.appendChild(div);
       });
     }
@@ -1163,32 +897,8 @@ cat > public/index.html << 'EOF'
     });
     chatInput?.addEventListener('keypress', (e) => { if (e.key === 'Enter') { e.preventDefault(); sendMessage(); } });
 
-    document.getElementById('file-input')?.addEventListener('change', (e) => {
-      const files = Array.from(e.target.files);
-      if (files.length > 0 && currentUser) {
-        files.forEach(file => {
-          if (file.type.startsWith('image/')) {
-            const reader = new FileReader();
-            reader.onload = (e) => {
-              const msg = { id: nextMessageId++, sender: currentUser.name, text: `<img src="${e.target.result}" style="max-width: 200px; border-radius: 8px; cursor: pointer;" onclick="showImageModal(this.src)">`, timestamp: Date.now(), reactions: [] };
-              messages[currentChannel].push(msg);
-              renderMessages(messages[currentChannel]);
-            };
-            reader.readAsDataURL(file);
-          } else {
-            const msg = { id: nextMessageId++, sender: currentUser.name, text: `📎 Uploaded: ${file.name}`, timestamp: Date.now(), reactions: [] };
-            messages[currentChannel].push(msg);
-            renderMessages(messages[currentChannel]);
-          }
-        });
-        showToast(`${files.length} file(s) uploaded`, 'success');
-      }
-    });
-
-    window.showImageModal = function(src) { const modal = document.getElementById('image-modal'); const modalImg = document.getElementById('modal-image'); modalImg.src = src; modal.classList.add('active'); };
     window.toggleEmojiPicker = function() { document.getElementById('emoji-picker').classList.toggle('active'); };
 
-    // Study Timer Functions
     window.startStudyTimer = function() {
       if (studyTimer.isRunning) return;
       studyTimer.isRunning = true;
@@ -1223,7 +933,6 @@ cat > public/index.html << 'EOF'
     window.showStudyTimerModal = function() { document.getElementById('study-modal').classList.add('active'); updateStudyDisplay(); };
     window.closeStudyTimerModal = function() { document.getElementById('study-modal').classList.remove('active'); };
 
-    // Radio buttons for timer duration
     const radioButtons = document.querySelectorAll('input[name="study-mode"]');
     radioButtons.forEach(radio => {
       radio.addEventListener('change', (e) => {
@@ -1238,7 +947,6 @@ cat > public/index.html << 'EOF'
       });
     });
 
-    // Auth functions
     window.showLoginForm = function() { document.getElementById('login-form').style.display = 'block'; document.getElementById('register-form').style.display = 'none'; document.getElementById('forgot-form').style.display = 'none'; };
     window.showRegisterForm = function() { document.getElementById('login-form').style.display = 'none'; document.getElementById('register-form').style.display = 'block'; document.getElementById('forgot-form').style.display = 'none'; };
     window.showForgotPassword = function() { document.getElementById('login-form').style.display = 'none'; document.getElementById('register-form').style.display = 'none'; document.getElementById('forgot-form').style.display = 'block'; };
@@ -1344,7 +1052,6 @@ cat > public/index.html << 'EOF'
       if (e.key === 'Escape') { document.querySelectorAll('.modal.active').forEach(modal => modal.classList.remove('active')); document.getElementById('emoji-picker')?.classList.remove('active'); }
     });
 
-    // Socket.IO handlers
     socket.on('connect', () => console.log('Connected'));
     socket.on('receive-message', (data) => {
       if (data.room === currentChannel) {
