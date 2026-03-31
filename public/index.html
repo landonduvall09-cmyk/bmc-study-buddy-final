@@ -487,8 +487,6 @@ cat > public/index.html << 'EOF'
     <div class="card-grid">
       <div class="card"><i class="fas fa-users"></i><h3>Study Together</h3><p>Join live study sessions with classmates.</p></div>
       <div class="card"><i class="fas fa-question-circle"></i><h3>Homework Help</h3><p>Get instant help in subject channels.</p></div>
-      <div class="card"><i class="fab fa-zoom" style="color: var(--google-blue);"></i><h3>Zoom</h3><p>Create and share meeting links instantly.</p></div>
-    </div>
 
     <div class="pomodoro-timer">
       <h2>📚 Study Timer</h2>
@@ -518,7 +516,6 @@ cat > public/index.html << 'EOF'
       <div class="card" style="flex: 1 1 200px; text-align: center;"><i class="fas fa-user-plus"></i><h3>1. Create Account</h3><p>Sign up with your school email</p></div>
       <div class="card" style="flex: 1 1 200px; text-align: center;"><i class="fas fa-book-open"></i><h3>2. Select Classes</h3><p>Choose your current courses</p></div>
       <div class="card" style="flex: 1 1 200px; text-align: center;"><i class="fas fa-comments"></i><h3>3. Join Channels</h3><p>Participate in discussions</p></div>
-      <div class="card" style="flex: 1 1 200px; text-align: center;"><i class="fab fa-zoom" style="color: var(--google-blue);"></i><h3>4. Zoom</h3><p>Create and share meeting links</p></div>
     </div>
   </div>
 
@@ -584,7 +581,6 @@ cat > public/index.html << 'EOF'
         <div class="chat-header">
           <span><i class="fas fa-hashtag"></i> <span id="channel-name">Global Lounge</span></span>
           <div class="chat-header-actions">
-            <i class="fab fa-zoom" onclick="createZoomMeet()" title="Create Zoom Meet"></i>
             <i class="fas fa-calendar-plus" onclick="scheduleCall()" title="Schedule a call"></i>
             <i class="fas fa-info-circle" onclick="showChannelInfo()" title="Channel info"></i>
           </div>
@@ -596,7 +592,6 @@ cat > public/index.html << 'EOF'
         <div class="chat-input-area">
           <button id="emoji-btn" onclick="toggleEmojiPicker()"><i class="fas fa-smile"></i></button>
           <input type="text" id="chat-input" placeholder="Type a message...">
-          <button id="zoom-meet-btn" onclick="createZoomMeet()"><i class="fab fa-zoom"></i></button>
           <button id="send-btn" onclick="sendMessage()"><i class="fas fa-paper-plane"></i></button>
         </div>
 
@@ -607,9 +602,6 @@ cat > public/index.html << 'EOF'
         <h3><i class="fas fa-circle" style="color: var(--success);"></i> Online — <span id="online-count">0</span></h3>
         <ul class="online-list" id="online-list"></ul>
         <div style="margin-top: 2rem;">
-          <h3><i class="fab fa-zoom" style="color: var(--google-blue);"></i> Quick Meet</h3>
-          <button class="zoom-meet-btn" style="width:100%; margin-top:1rem;" onclick="createZoomMeet()"><i class="fas fa-video"></i> New Zoom Meet</button>
-        </div>
       </div>
     </div>
   </div>
@@ -784,27 +776,7 @@ cat > public/index.html << 'EOF'
       });
     });
 
-    window.createZoomMeet = function() {
-      if (!currentUser) { showToast('Please log in first', 'warning'); return; }
-      const randomId = Math.floor(Math.random() * 90000000000) + 10000000000;
-      const meetCode = randomId.toString();
-      const meetLink = `https://zoom.us/j/${meetCode}`;
-      window.open('https://zoom.us/join', '_blank');
-      socket.emit('send-message', { room: currentChannel, user: currentUser.name, text: `🎥 Zoom Meet created! Join at: ${meetLink}\nMeeting ID: ${meetCode}` });
-      showToast('Zoom Meet created and shared!', 'success');
-    };
 
-    window.scheduleCall = function() {
-      if (!currentUser) { showToast('Please log in first', 'warning'); return; }
-      const dateTime = prompt('Enter date and time for the call (e.g., "Tomorrow 3:00 PM"):');
-      if (!dateTime) return;
-      const meetCode = prompt('Enter the Zoom Meet code you will use:', 'abc-defg-hij');
-      if (!meetCode) return;
-      const cleanCode = meetCode.trim().replace(/\s+/g, '');
-      const meetLink = `https://zoom.us/j/${cleanCode}`;
-      socket.emit('send-message', { room: currentChannel, user: currentUser.name, text: `📅 Scheduled a Zoom Meet for ${dateTime}! Code: ${cleanCode} - Join at ${meetLink}` });
-      showToast(`Meet scheduled for ${dateTime}`, 'success');
-    };
 
     function buildChannelList() {
       if (!currentUser) return;
